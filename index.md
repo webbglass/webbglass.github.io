@@ -9,7 +9,7 @@ title: [一个豆瓣用户](https://www.douban.com/people/JonDoe297/)的数据�
 
 <br>
 
-### 微博超话发帖限时解锁活动第一周推移 <span class="badge bg-success" style="color:white">New</span>
+### 微博超话发帖限时解锁活动第一周数据推移 <span class="badge bg-success" style="color:white">New</span>
 
 * 数据时段：2022年4月18日至2022年4月24日
 * [可交互可视化链接](https://webbglass.github.io/weibo-unlock-2022/)

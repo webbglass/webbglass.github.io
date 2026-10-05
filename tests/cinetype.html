@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#0d0e12" />
+<title>CineType v2 — Movie Personality</title>
+<style>
+:root{
+  --bg:#0d0e12;--bg2:#12141a;--panel:#171a21;--panel2:#1d212a;--text:#f5f2ea;--muted:#a7a8ad;--faint:#70747d;
+  --line:rgba(255,255,255,.11);--shadow:0 24px 70px rgba(0,0,0,.34);--radius:22px;
+  --taste-a:#d8ff62;--taste-b:#ff8fb6;--watch-a:#66d8ff;--watch-b:#ffb15f;--danger:#ff786f;
+  --soft:rgba(255,255,255,.055);--soft2:rgba(255,255,255,.035);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+}
+html[data-theme="light"]{
+  --bg:#f5f2eb;--bg2:#ebe8e1;--panel:#fffdfa;--panel2:#f5f1e9;--text:#1b1c21;--muted:#60636c;--faint:#8d9097;
+  --line:rgba(20,22,28,.12);--shadow:0 20px 55px rgba(61,55,45,.14);--soft:rgba(20,22,28,.055);--soft2:rgba(20,22,28,.035);
+}
+*{box-sizing:border-box}html{background:var(--bg);color-scheme:dark}html[data-theme="light"]{color-scheme:light}
+body{margin:0;min-height:100vh;color:var(--text);background:
+ radial-gradient(circle at 8% -5%,color-mix(in srgb,var(--taste-b) 13%,transparent),transparent 30%),
+ radial-gradient(circle at 92% 4%,color-mix(in srgb,var(--watch-a) 12%,transparent),transparent 27%),var(--bg);transition:background .25s,color .25s}
+button,input,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.topbar{position:sticky;top:0;z-index:40;min-height:66px;display:flex;align-items:center;gap:20px;padding:10px max(20px,calc((100vw - 1180px)/2));background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.brand{border:0;background:none;color:var(--text);font-weight:900;font-size:18px;letter-spacing:-.03em;display:flex;align-items:center;gap:9px;white-space:nowrap}.brand-mark{color:var(--taste-a)}
+.topnav{display:flex;align-items:center;gap:4px;flex:1;overflow:auto;scrollbar-width:none}.topnav::-webkit-scrollbar{display:none}.topnav button,.utility button{border:0;background:none;color:var(--muted);padding:9px 11px;border-radius:11px;white-space:nowrap}.topnav button:hover,.utility button:hover{background:var(--soft);color:var(--text)}
+.utility{display:flex;gap:6px}.utility button{border:1px solid var(--line);background:var(--soft2)}
+main{max-width:1180px;margin:auto;padding:0 20px 70px}.page{animation:rise .28s ease both}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero{padding:82px 0 48px;max-width:1000px}.eyebrow{text-transform:uppercase;letter-spacing:.15em;font-size:11px;font-weight:900;color:var(--muted);margin-bottom:14px}.hero h1,.page-head h1{font-size:clamp(44px,7vw,84px);line-height:.96;letter-spacing:-.065em;margin:0}.hero h1 em{font-style:normal;color:var(--taste-a)}.lede{max-width:780px;font-size:20px;line-height:1.55;color:var(--muted);margin:25px 0 30px}
+.actions,.button-row{display:flex;gap:10px;flex-wrap:wrap}.primary,.secondary,.ghost,.option-btn{border:0;border-radius:14px;padding:13px 17px;font-weight:800}.primary{background:var(--taste-a);color:#10120b}.secondary{background:var(--panel2);border:1px solid var(--line);color:var(--text)}.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}.primary:hover,.secondary:hover,.ghost:hover,.option-btn:hover{transform:translateY(-1px)}.small{padding:8px 11px;font-size:13px}.full{width:100%}
+.mode-grid,.module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0 38px}.card,.panel{background:color-mix(in srgb,var(--panel) 94%,transparent);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.card{padding:27px}.card h2,.panel h2,.panel h3{margin:0 0 10px;letter-spacing:-.025em}.card p,.panel p{color:var(--muted);line-height:1.55}.taste-card{border-top:4px solid var(--taste-a)}.watch-card{border-top:4px solid var(--watch-a)}
+.module-pill{display:inline-flex;gap:8px;align-items:center;font-size:12px;font-weight:900;padding:7px 10px;border-radius:999px;background:var(--soft)}.dot{width:8px;height:8px;border-radius:50%}.taste-dot{background:var(--taste-a)}.watch-dot{background:var(--watch-a)}
+.principles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px}.principle{padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--soft2)}.principle b{display:block;margin-bottom:6px}.principle span{font-size:13px;color:var(--muted);line-height:1.45}
+.page-head{padding:55px 0 25px}.page-head h1{font-size:clamp(38px,5vw,64px)}.page-head p{color:var(--muted);max-width:750px;line-height:1.55;font-size:17px}
+.quiz-shell{max-width:840px;margin:32px auto 0}.quiz-top{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:17px}.progress-track{height:7px;background:var(--soft);border-radius:999px;overflow:hidden;flex:1}.progress-fill{height:100%;border-radius:999px;transition:width .22s}.taste-progress{background:linear-gradient(90deg,var(--taste-a),var(--taste-b))}.watch-progress{background:linear-gradient(90deg,var(--watch-a),var(--watch-b))}.count{font-size:12px;color:var(--muted);font-weight:800;white-space:nowrap}
+.question-card{padding:clamp(22px,4vw,38px);background:var(--panel);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow)}.question-kind{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:.12em;text-transform:uppercase}.question-card h2{font-size:clamp(25px,4vw,38px);line-height:1.15;letter-spacing:-.04em;margin:12px 0 8px}.question-sub{color:var(--muted);margin:0 0 22px;line-height:1.45;font-size:14px}.options{display:grid;gap:10px}.option-btn{text-align:left;background:var(--panel2);border:1px solid var(--line);color:var(--text);font-weight:680;line-height:1.35;padding:15px 16px;min-height:54px}.option-btn:hover{border-color:color-mix(in srgb,var(--module-color) 55%,var(--line));background:color-mix(in srgb,var(--module-color) 7%,var(--panel2))}.option-label{display:flex;gap:11px;align-items:flex-start}.option-key{font-size:11px;font-weight:900;color:var(--muted);border:1px solid var(--line);min-width:23px;height:23px;border-radius:7px;display:grid;place-items:center}.quiz-bottom{display:flex;justify-content:space-between;margin-top:13px}.micro{font-size:12px;color:var(--muted);line-height:1.45}.link-btn{background:none;border:0;color:var(--muted);padding:9px 3px}.link-btn:hover{color:var(--text)}
+.result-wrap{padding:52px 0 30px}.result-hero{position:relative;overflow:hidden;padding:38px;border:1px solid var(--line);border-radius:28px;background:var(--panel);box-shadow:var(--shadow)}.result-hero:after{content:"";position:absolute;inset:-30% -10% auto 48%;height:440px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--result-color) 22%,transparent),transparent 66%);pointer-events:none}.result-code{font-size:clamp(76px,13vw,155px);font-weight:950;letter-spacing:-.09em;line-height:.82;color:var(--result-color);position:relative;z-index:1}.result-title{font-size:clamp(30px,5vw,52px);font-weight:900;letter-spacing:-.05em;margin:18px 0 8px;position:relative;z-index:1}.result-headline{max-width:820px;color:var(--muted);font-size:18px;line-height:1.5;position:relative;z-index:1}
+.result-section{margin-top:18px;padding:27px;background:var(--panel);border:1px solid var(--line);border-radius:22px}.section-title-row{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px}.section-title-row h2{margin:0;letter-spacing:-.035em}.palette-tag{font-size:12px;font-weight:900;padding:7px 10px;border-radius:999px;background:var(--soft)}
+.axis-list{display:grid;gap:13px}.axis-card{padding:17px;border:1px solid var(--line);border-radius:17px;background:var(--soft2)}.axis-head{display:flex;justify-content:space-between;gap:20px;font-size:13px;font-weight:850}.axis-head span:last-child{color:var(--module-color)}.bipolar{position:relative;margin:12px 0 10px;height:12px;border-radius:999px;background:linear-gradient(90deg,color-mix(in srgb,var(--module-secondary) 48%,transparent),var(--soft),color-mix(in srgb,var(--module-color) 48%,transparent))}.bipolar:after{content:"";position:absolute;left:50%;top:-4px;width:1px;height:20px;background:var(--line)}.axis-dot{position:absolute;top:50%;width:19px;height:19px;border-radius:50%;transform:translate(-50%,-50%);background:var(--module-color);border:4px solid var(--panel);box-shadow:0 0 0 1px var(--line)}.axis-statement{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.map-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}.map-card{padding:15px;border:1px solid var(--line);border-radius:17px;background:var(--soft2)}.map-card h3{margin:2px 0 8px;font-size:15px}.map-card canvas{display:block;width:100%;height:auto;border-radius:12px}
+.reco-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}.reco-list{display:grid;gap:9px}.reco{padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:var(--soft2);display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.reco b{display:block}.reco small{display:block;color:var(--muted);line-height:1.4;margin-top:4px}.match{font-size:11px;font-weight:900;color:var(--module-color);white-space:nowrap}
+.egg-list{display:flex;flex-wrap:wrap;gap:8px}.egg{padding:10px 12px;border-radius:13px;background:var(--soft);font-size:13px;border:1px solid var(--line)}
+.grill-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:16px}.panel{padding:24px}.source-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.source-tabs button{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted)}.source-tabs button.active{color:var(--text);background:var(--soft)}.connector{padding:16px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);line-height:1.5}.connector input,.connector textarea{width:100%;margin-top:11px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--text)}.connector textarea{min-height:130px;resize:vertical}.filebox{display:block;margin:14px 0;padding:18px;border:1px dashed var(--line);border-radius:14px;text-align:center;color:var(--muted)}.filebox input{display:none}.import-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.stat{padding:13px;border-radius:13px;background:var(--soft2);border:1px solid var(--line)}.stat b{display:block;font-size:22px}.grill-copy{line-height:1.65;color:var(--muted)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:90;padding:11px 15px;border-radius:12px;background:var(--text);color:var(--bg);font-size:13px;font-weight:800;box-shadow:var(--shadow)}
+.footer-note{margin-top:35px;color:var(--faint);font-size:12px;line-height:1.5}.kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:2px 6px;font-size:11px;color:var(--muted)}
+@media(max-width:820px){.topbar{gap:8px}.brand span:last-child{display:none}.module-grid,.mode-grid,.reco-grid,.grill-grid,.map-grid{grid-template-columns:1fr}.principles{grid-template-columns:1fr 1fr}.utility button span{display:none}.result-hero{padding:27px}.result-section{padding:20px}.import-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){main{padding-left:14px;padding-right:14px}.hero{padding-top:55px}.hero h1{font-size:47px}.principles{grid-template-columns:1fr}.question-card{padding:21px}.topnav button{padding:8px 7px;font-size:12px}.utility{gap:3px}.utility button{padding:8px}.result-code{font-size:82px}.axis-head{font-size:12px}.reco{display:block}.match{display:block;margin-top:8px}.actions>*{width:100%}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button class="brand" data-nav="home"><span class="brand-mark">◉</span><span>CineType</span></button>
+  <nav class="topnav" id="topnav"></nav>
+  <div class="utility">
+    <button id="langBtn" title="Language">中 / EN</button>
+    <button id="themeBtn" title="Theme"><span id="themeIcon">☾</span> <span id="themeLabel">Dark</span></button>
+  </div>
+</header>
+<main id="app"></main>
+<div id="toast" class="toast hidden"></div>
+<script>
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const STORAGE='cinetype-v2-state';
+const initial={lang:(navigator.language||'').toLowerCase().startsWith('zh')?'zh':'en',theme:'dark',taste:null,watch:null,imported:null,last:'home'};
+let state=load(), session=null, flow=null;
+function load(){try{return {...initial,...JSON.parse(localStorage.getItem(STORAGE)||'{}')}}catch{return {...initial}}}
+function save(){localStorage.setItem(STORAGE,JSON.stringify(state))}
+function L(x){if(x==null)return '';return typeof x==='string'?x:(x[state.lang]??x.en??'')}
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function toast(s){const el=$('#toast');el.textContent=s;el.classList.remove('hidden');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.add('hidden'),1800)}
+function pct(v){return Math.round(Math.abs(v))}
+function hashHue(code,kind){let h=kind==='taste'?72:198;for(let i=0;i<code.length;i++)h=(h+code.charCodeAt(i)*29)%360;return h}
+function resultColor(r){return `hsl(${hashHue(r.code,r.kind)} 86% ${state.theme==='dark'?67:42}%)`}
+function applyTheme(){document.documentElement.dataset.theme=state.theme;$('#themeIcon').textContent=state.theme==='dark'?'☾':'☀';$('#themeLabel').textContent=state.lang==='zh'?(state.theme==='dark'?'深色':'浅色'):(state.theme==='dark'?'Dark':'Light');document.querySelector('meta[name="theme-color"]').content=state.theme==='dark'?'#0d0e12':'#f5f2eb'}
+const UI={
+ nav:{home:{en:'Home',zh:'首页'},taste:{en:'Film DNA',zh:'电影偏好'},watch:{en:'Watching Style',zh:'观影方式'},grill:{en:'Grill Lab',zh:'影评拷问'},results:{en:'Results',zh:'结果'}},
+ home:{
+  eye:{en:'Two small quizzes. One annoyingly specific movie profile.',zh:'两份小测试，一张有点过分具体的电影人格画像。'},
+  title1:{en:'What do movies need to do',zh:'电影要怎么拍，'},title2:{en:'to win you over?',zh:'才能让你买账？'},
+  lede:{en:'CineType separates what you reward on screen from how you behave around movies. The questions are short, sideways, and designed to be harder to reverse-engineer than a normal personality quiz.',zh:'CineType 把“你喜欢电影怎么拍”和“你平时怎么看电影”分开测。题目尽量短、绕一点弯，不会直接问你“你是不是喜欢复杂人物”这种一眼看穿答案的题。'},
+  quick:{en:'Quick Double Feature · 22 Q',zh:'快速双片连映 · 22 题'},deep:{en:"Director's Cut · 44 Q",zh:'导演剪辑版 · 44 题'},
+  tTitle:{en:'Film DNA',zh:'电影偏好'},tSub:{en:'What do you reward?',zh:'什么样的电影更容易让你买账？'},tCopy:{en:'People or roles. Organic consequences or designed payoffs. Quiet feeling or overt cueing. Invisible craft or a loud authorial fingerprint.',zh:'人物要不要像真实的人？剧情要自然生长还是精密编排？情绪要埋进去还是直接推给你？电影语言要隐身还是高调现身？'},
+  wTitle:{en:'Watching Style',zh:'观影方式'},wSub:{en:'What kind of viewer are you?',zh:'你是哪一种观众？'},wCopy:{en:'Do you surrender or audit? Stream anywhere or turn screenings into events? Log everything or let it fade? Sample freely or fall into completionist rabbit holes?',zh:'看片时先沉浸还是边看边审？在哪儿都能看还是一定要讲究场合？看完就算还是留下记录？随缘抽样还是一不小心补完整个系列？'},
+  qQuick:{en:'Quick Cut',zh:'快速版'},qDeep:{en:'Deep Cut',zh:'深入版'},
+  pTitle:{en:'Built to surprise you, not flatter you.',zh:'不是来夸你的，也尽量不让你一眼猜到测什么。'},
+  p1a:{en:'Short by default',zh:'默认够短'},p1b:{en:'Most questions are one sentence and one decision.',zh:'大多数题只有一句情境和一个选择。'},
+  p2a:{en:'Continuous underneath',zh:'底层保留连续分数'},p2b:{en:'The four letters are a nickname, not a diagnosis.',zh:'四个字母是方便传播的昵称，不是假装科学的诊断。'},
+  p3a:{en:'Movie duels are weak evidence',zh:'电影二选一只算弱证据'},p3b:{en:"Knowing or loving one movie shouldn't hijack your whole type.",zh:'看过某部片、喜欢某个演员，不该把整份结果带跑。'},
+  p4a:{en:'No “good” pole',zh:'没有“正确答案”那一端'},p4b:{en:'Myth, melodrama and big obvious craft are legitimate tastes too.',zh:'喜欢神话式人物、浓烈煽情、显眼的形式感，也完全可以是一种稳定口味。'}
+ },
+ quiz:{back:{en:'Back',zh:'上一题'},skip:{en:'Skip',zh:'跳过'},duel:{en:'Movie duel · weak evidence',zh:'电影二选一 · 只算弱证据'},scene:{en:'Quick scene',zh:'小情境'},habit:{en:'Viewer habit',zh:'观影习惯'},unknown:{en:"Haven't seen both / can't choose",zh:'没都看过 / 选不出来'}},
+ results:{
+  taste:{en:'FILM DNA',zh:'电影偏好'},watch:{en:'WATCHING STYLE',zh:'观影方式'},
+  party:{en:'The letters are the party hat. The scores underneath are the actual profile.',zh:'四个字母负责好玩和好记，下面的连续分数才是实际画像。'},
+  axes:{en:'Your four axes',zh:'你的四条轴'},maps:{en:'Two maps, no radar chart gymnastics',zh:'两张坐标图，不再折腾雷达图'},
+  movies:{en:'Movie suggestions',zh:'电影建议'},directors:{en:'Director neighborhoods',zh:'导演邻域'},
+  grammar:{en:'grammar match',zh:'语法匹配'},eggs:{en:'Out-of-dimension incidents',zh:'掉出维度的异常事件'},
+  share:{en:'Make share card',zh:'生成分享卡'},retake:{en:'Retake this quiz',zh:'重测这一份'},grill:{en:'Grill this with my diary',zh:'拿观影记录来拷问结果'},other:{en:'Take the other quiz',zh:'再测另一份'},
+  noTaste:{en:'Take Film DNA to unlock movie and director suggestions.',zh:'完成“电影偏好”后会解锁电影和导演建议。'}
+ },
+ grill:{
+  eye:{en:'GRILL LAB · LOCAL DEMO',zh:'影评拷问 · 本地演示'},title:{en:'Give the quiz evidence it can argue with.',zh:'把观影记录交上来，让测试有机会反驳你。'},copy:{en:'CSV/text import works locally. Live account connectors remain placeholders in this prototype.',zh:'CSV / 文本导入会在本机运行；账号直连在这个原型里仍然只是占位功能。'},
+  source:{en:'Pick a source',zh:'选择来源'},local:{en:'Nothing leaves this browser.',zh:'数据不会离开这个浏览器。'},
+  demo:{en:'Load anonymous demo diary',zh:'载入匿名演示观影记录'},analyze:{en:'Analyze import',zh:'分析导入内容'},grillBtn:{en:'Grill me',zh:'开始拷问'},waiting:{en:'Waiting for evidence.',zh:'等待证据。'},
+  upload:{en:'Choose a CSV or text file',zh:'选择 CSV 或文本文件'},uploadSub:{en:'Letterboxd/IMDb-ish CSV and generic Title + Rating columns are supported.',zh:'支持 Letterboxd / IMDb 风格 CSV，也支持含“片名 + 评分”字段的普通表格。'}
+ }
+};
+
+const tasteAxes={
+ char:{neg:{en:'Role-led',zh:'角色型'},pos:{en:'Agentic',zh:'主体型'},negL:'R',posL:'A',label:{en:'Character logic',zh:'人物逻辑'},
+  posStmt:{en:'You {d} need characters to feel like autonomous people whose choices belong specifically to them, rather than mainly serving as clean roles or symbols.',zh:'你{d}希望人物像有自己意志的人，行为首先属于这个具体人物，而不是主要承担清晰的类型功能或象征作用。'},
+  negStmt:{en:'You {d} enjoy characters working as clear roles, archetypes or symbols, without requiring every one of them to behave like a fully autonomous psychological portrait.',zh:'你{d}接受人物以清晰的类型、功能或象征存在，不要求每个角色都必须像完整独立的心理个体。'}},
+ caus:{neg:{en:'Orchestrated',zh:'编排型'},pos:{en:'Emergent',zh:'生长型'},negL:'O',posL:'E',label:{en:'Story motion',zh:'剧情动力'},
+  posStmt:{en:'You {d} prefer consequences to grow from earlier choices and rules, rather than feeling visibly arranged around preplanned twists, climaxes or payoffs.',zh:'你{d}偏好结果从前面的选择和规则自然长出来，而不是明显为了既定反转、高潮或爆点去安排前因。'},
+  negStmt:{en:'You {d} enjoy stories that are visibly engineered around twists, climaxes and satisfying payoffs, even when the larger design matters more than local cause-and-effect.',zh:'你{d}接受故事围绕反转、高潮和爽点进行明显编排，即使整体设计有时比局部因果更重要。'}},
+ affect:{neg:{en:'Signaled',zh:'提示型'},pos:{en:'Embedded',zh:'内嵌型'},negL:'S',posL:'E',label:{en:'Emotional language',zh:'情绪表达'},
+  posStmt:{en:'You {d} prefer emotion and theme to emerge from behavior, images, objects and rhythm, rather than being strongly announced by dialogue, music or reaction cues.',zh:'你{d}偏好让情绪和主题从行为、画面、物件和节奏里自己浮出来，而不是靠台词、配乐或反应镜头明确提示。'},
+  negStmt:{en:'You {d} enjoy clear emotional and thematic guidance—big performances, music, declarations or other cues can be part of the pleasure rather than a distraction.',zh:'你{d}接受电影明确带领情绪和主题；大表演、配乐、直白表达本身也可以成为观影快感的一部分。'}},
+ form:{neg:{en:'Transparent',zh:'隐身型'},pos:{en:'Expressive',zh:'显形型'},negL:'T',posL:'E',label:{en:'Formal voice',zh:'形式存在感'},
+  posStmt:{en:'You {d} enjoy a visible directorial fingerprint—editing, framing, sound or design can call attention to themselves and still deepen the movie.',zh:'你{d}喜欢明显的作者痕迹；剪辑、构图、声音或美术即使主动抢眼，也可以让电影更有魅力。'},
+  negStmt:{en:'You {d} prefer craft to disappear into the experience, with technique serving the movie quietly instead of constantly reminding you that someone is directing.',zh:'你{d}偏好技术隐入体验，让手法安静地服务电影，而不是不断提醒你“这里有人在导演”。'}}
+};
+const watchAxes={
+ engage:{neg:{en:'Absorb',zh:'沉浸型'},pos:{en:'Audit',zh:'审片型'},negL:'A',posL:'U',label:{en:'While watching',zh:'看片时'},
+  posStmt:{en:'You {d} keep an internal editor running while the movie is still playing, testing choices, logic and construction in real time.',zh:'你{d}会在电影还没结束时就启动脑内审片员，一边看一边检查选择、逻辑和结构。'},
+  negStmt:{en:'You {d} prefer to surrender first and make sense of the movie afterward, rather than continuously auditing it in real time.',zh:'你{d}倾向先让自己进入电影，等看完再分析，而不是全程实时审查它。'}},
+ venue:{neg:{en:'Access',zh:'随取型'},pos:{en:'Event',zh:'仪式型'},negL:'A',posL:'E',label:{en:'Where it happens',zh:'在哪里看'},
+  posStmt:{en:'You {d} treat format, venue, crowd and occasion as part of the experience; the same film can be worth more in the right screening.',zh:'你{d}把格式、影院、观众和场合都视为体验的一部分；同一部电影在合适的放映里会更值得。'},
+  negStmt:{en:'You {d} prioritize easy access and the film itself; a convenient screen at home can be as valid as a special theatrical occasion.',zh:'你{d}更看重方便和电影本身；在家随手点开，也可以和特殊影院放映同样成立。'}},
+ archive:{neg:{en:'Ephemeral',zh:'即逝型'},pos:{en:'Archive',zh:'存档型'},negL:'E',posL:'A',label:{en:'After the credits',zh:'看完以后'},
+  posStmt:{en:'You {d} leave breadcrumbs—ratings, notes, lists, dates or screenshots—so future-you can reconstruct what you watched and thought.',zh:'你{d}喜欢留下评分、短评、清单、日期或截图，让未来的自己还能拼回当时看了什么、怎么想。'},
+  negStmt:{en:'You {d} let many viewing experiences fade naturally into memory instead of turning each one into a record or data point.',zh:'你{d}愿意让不少观影体验自然留在记忆里，不会把每一部都变成一条记录或一个数据点。'}},
+ scope:{neg:{en:'Sample',zh:'抽样型'},pos:{en:'Complete',zh:'补全型'},negL:'S',posL:'C',label:{en:'Rabbit holes',zh:'掉坑以后'},
+  posStmt:{en:'You {d} let interest expand into sequels, filmographies, alternate cuts and surrounding context; one good film can become a project.',zh:'你{d}容易把兴趣扩展到续集、导演全集、不同剪辑版和相关背景；一部好片很可能变成一个小项目。'},
+  negStmt:{en:'You {d} sample freely and move on; liking one film does not create an obligation to finish the franchise, director or canon around it.',zh:'你{d}擅长随缘抽样、看完就走；喜欢一部电影并不会自动产生补完系列、导演或经典片单的义务。'}}
+};
+function degree(v){const a=Math.abs(v);if(state.lang==='zh'){if(a<15)return '大体不偏向任何一端，既能';if(a<35)return '略微';if(a<60)return '比较';if(a<80)return '明显';return '非常'}else{if(a<15)return 'are broadly balanced and can';if(a<35)return 'slightly';if(a<60)return 'moderately';if(a<80)return 'strongly';return 'very strongly'}}
+function axisStatement(axis,v){if(Math.abs(v)<15){if(state.lang==='zh')return `${pct(v)}% 接近平衡。你会根据具体电影在“${L(axis.neg)}”与“${L(axis.pos)}”之间切换，没有明显固定偏向。`;return `${pct(v)}% from center. You switch between ${L(axis.neg)} and ${L(axis.pos)} depending on the film, with no strong fixed preference.`}const pole=v>=0?axis.pos:axis.neg;const tmpl=v>=0?axis.posStmt:axis.negStmt;const d=degree(v);return state.lang==='zh'?`${pct(v)}% 偏向${L(pole)}。`+L(tmpl).replace('{d}',d):`${pct(v)}% toward ${L(pole)}. `+L(tmpl).replace('{d}',d)}
+
+const tasteTypes={
+ AEEE:{en:['The Auteur Detective','You want characters to own their choices and filmmakers to own their style. Strong craft is welcome; visible emotional instructions are less necessary.'],zh:['作者型侦探','你希望人物对自己的选择负责，也希望导演有鲜明的手。形式可以很高调，但情绪最好别拿着说明书塞给你。']},
+ AEET:{en:['The Quiet Humanist','You trust people, consequences and small details. The best craft is often the craft you stop noticing.'],zh:['静默人文派','你相信人物、后果和细节。最好的技术往往是看到后来已经忘了它在发力。']},
+ AESE:{en:['The Emotional Auteur','You like vivid people and vivid filmmaking, and you do not mind the movie conducting the room when it has earned the baton.'],zh:['情绪作者派','你既要鲜活人物，也要鲜明电影语言；只要电影配得上指挥棒，你并不排斥它带着全场一起感受。']},
+ AEST:{en:['The Classical Empath','Credible people, clear feeling, clean delivery. You like emotional architecture when it still feels human.'],zh:['古典共情派','人物可信、情绪清楚、表达利落。只要人还是人，你并不介意电影把情感结构搭得漂亮。']},
+ AOEE:{en:['The Choreographed Rebel','You enjoy big design and visible style, but the characters still need private lives inside the machinery.'],zh:['编舞式叛逆者','你享受大设计和强形式，但机器再漂亮，里面的人也得保留自己的私生活。']},
+ AOET:{en:['The Precision Dramatist','You appreciate a well-built dramatic machine, provided the human parts remain credible and the technique stays disciplined.'],zh:['精密戏剧师','你欣赏结构漂亮的戏剧机器，前提是人物还能站得住，手法也别喧宾夺主。']},
+ AOSE:{en:['The Grand Characterist','You like actors, emotion and spectacle to arrive at full volume, but not at the cost of recognizable human behavior.'],zh:['盛大人物派','你欢迎表演、情绪和场面一起开大音量，但不能因此把人物本身弄丢。']},
+ AOST:{en:['The Prestige Romantic','You like polished emotional architecture, clear character stakes and a movie that knows exactly when to land the big beat.'],zh:['精装浪漫派','你喜欢精心搭好的情感结构、清楚的人物目标，以及知道什么时候该把大招落下来的电影。']},
+ REEE:{en:['The Mythic Experimentalist','You can let characters become icons, masks or story-shapes if the movie builds a strange world with its own living rules.'],zh:['神话实验派','人物可以是图腾、面具或类型轮廓，只要电影真的建立出一套会自己运转的奇异世界。']},
+ REET:{en:['The Lean Fabulist','You like clean forms, simple figures and consequences that grow naturally. A fable can be enough.'],zh:['简洁寓言派','你喜欢干净的形式、清楚的人物轮廓，以及自然长出来的后果。一则好寓言就已经足够。']},
+ RESE:{en:['The Pop Surrealist','You enjoy bold style, clear emotion and characters that can function like icons inside an energetic cinematic system.'],zh:['流行超现实派','你喜欢高调形式、清晰情绪，也接受人物像图标一样在充满能量的电影系统里运转。']},
+ REST:{en:['The Clean Storyteller','You value readable roles, clear feeling and stories that move without making the machinery the main attraction.'],zh:['清爽故事派','你看重清楚的角色功能、明确的情感和顺畅推进；机器可以很精密，但不必成为主角。']},
+ ROEE:{en:['The Designed Dreamer','You like movies that visibly invent their own rules, symbols and visual worlds—even when people serve the larger design.'],zh:['设计型造梦者','你喜欢电影公开发明自己的规则、符号和视觉世界；人物有时为整体设计服务也没关系。']},
+ ROET:{en:['The Plot Architect','You appreciate sturdy construction, legible roles and well-timed payoffs. Efficiency can be beautiful.'],zh:['剧情建筑师','你欣赏扎实结构、清晰角色和准时落下的回报。效率本身也可以很美。']},
+ ROSE:{en:['The Grand Entertainer','Give you archetypes, spectacle, music and a satisfying payoff. Cinema is allowed to put on a show.'],zh:['盛大娱乐家','类型人物、场面、音乐、爽点都可以来。电影本来就有权认真办一场秀。']},
+ ROST:{en:['The Popcorn Oracle','You understand the ancient contract: clean roles, deliberate setup, strong cues, satisfying delivery. Sometimes the obvious choice is obvious because it works.'],zh:['爆米花先知','你理解那份古老契约：角色清楚、铺垫明确、情绪到位、结尾兑现。有些招之所以老，是因为它真的好用。']}
+};
+const watchTypes={
+ UEAC:{en:['The Screening Archivist','You plan the occasion, audit the movie, keep the evidence and—once hooked—probably finish the set.'],zh:['放映存档员','你会安排场合、边看边审、留下证据；一旦掉坑，还很可能顺手补全。']},
+ UEAS:{en:['The Festival Cartographer','You care where you saw it and what you thought, but you still cherry-pick rather than obey completionist law.'],zh:['影展制图师','你在意在哪里看、看完怎么想，但依旧保持抽样自由，不接受补完主义统治。']},
+ UEEC:{en:['The Ritual Completionist','You turn moviegoing into an event and a rabbit hole, even if you do not leave much of a paper trail afterward.'],zh:['仪式补全派','你会把看片变成仪式，也很容易一路掉进系列坑；至于看完留不留记录，倒未必执着。']},
+ UEES:{en:['The Premiere Pilgrim','You like the right room, the right night and a sharp post-film argument—then you are happy to move on.'],zh:['首映巡礼者','你喜欢对的厅、对的夜晚、看完一场漂亮的讨论；之后要不要继续补，就随缘。']},
+ UAAC:{en:['The Catalog Diver','You can watch anywhere, but once curiosity starts you audit, record and dive through the surrounding catalog.'],zh:['片库潜水员','在哪儿看都行，但一旦好奇心启动，你会边审、边记、边往作品周边越潜越深。']},
+ UAAS:{en:['The Sofa Critic','Convenience wins over ceremony, but your brain and notebook are still very much on duty.'],zh:['沙发影评人','不迷信仪式感，方便最重要；但脑内审片员和记录本一个都不会下班。']},
+ UAEC:{en:['The Rabbit-Hole Auditor','You do not need a fancy screening to become dangerously thorough. One interesting movie can consume a week.'],zh:['兔子洞审计员','不需要豪华影院，你也能补得很危险。一部有意思的电影就足够吞掉你一周。']},
+ UAES:{en:['The Casual Analyst','You like thinking hard about movies without turning the hobby into logistics, collecting or homework.'],zh:['随性分析派','你喜欢认真想电影，但不想把爱好变成排片、收藏或作业。']},
+ AEAC:{en:['The Memory Keeper','You surrender in the moment, cherish the occasion, preserve the memory—and often follow the story world further.'],zh:['记忆保管员','看片时先交给电影，场合也很重要；之后会把这次体验存下来，喜欢了还常常继续追。']},
+ AEAS:{en:['The Cinema Romantic','A good screening becomes a memory worth keeping, but you refuse to turn every affection into a syllabus.'],zh:['影院浪漫派','一场好放映会变成值得保存的记忆，但你拒绝把每次喜欢都变成必修课。']},
+ AEEC:{en:['The Big-Screen Binger','You love the event and the journey more than the postmortem. If a world hooks you, you happily stay inside it.'],zh:['大银幕追更派','你更爱现场和旅程，不急着尸检电影；一旦世界观把你勾住，你很愿意继续待在里面。']},
+ AEES:{en:['The Night-Out Dreamer','You go for the experience, let the movie wash over you, and move on when the night is over.'],zh:['散场梦游者','你为体验本身而去，让电影先把你带走；夜晚结束以后，也可以轻轻放下。']},
+ AAAC:{en:['The Comfort Collector','Home is fine, immersion comes first, but favorites quietly turn into records and little completion projects.'],zh:['舒适区收藏家','在家看完全没问题，沉浸优先；但真正喜欢的东西会悄悄变成记录和小型补全计划。']},
+ AAAS:{en:['The Mood Watcher','You watch by mood, surrender easily, and do not need every movie to become a data point or a project.'],zh:['随心观众','你按心情看片，容易进入状态，也不需要把每部电影都变成数据或任务。']},
+ AAEC:{en:['The Stream Marathoner','You are easy about venue and analysis, but once a story world catches you, the next installment starts automatically.'],zh:['串流马拉松选手','你对场地和分析都很随和，但一旦被某个世界抓住，下一部往往会自动播放。']},
+ AAES:{en:['The Pure Drifter','Watch what calls to you, wherever it is, feel it while it lasts, then let the next movie find you.'],zh:['纯粹漂流派','哪部片在叫你就看哪部，在哪儿都行；当下感受够了，然后等下一部自己找上门。']}
+};
+
+function O(en,zh,w={},egg={}){return {text:{en,zh},w,egg}}
+const tasteQuestions=[
+ {id:'t1',tier:'quick',kind:'scene',prompt:{en:'A protagonist makes the choice that ruins everything. Which version grabs you more?',zh:'主角做了一个毁掉一切的选择。哪一种更能抓住你？'},opts:[
+  O('You could feel this flaw building for an hour.','这个缺点已经铺了一个小时，现在终于爆了。',{char:2,caus:1}),
+  O('It comes out of nowhere, but the turn is unforgettable.','完全没想到，但这个转折太难忘了。',{char:-1.2,caus:-1.5}),
+  O('Either works if the scene itself is great.','都可以，只要这一场本身够好。',{})]},
+ {id:'t2',tier:'quick',kind:'scene',prompt:{en:'Pick your favorite kind of villain.',zh:'选一种你更容易喜欢的反派。'},opts:[
+  O('Specific enough that I understand how they became this person.','具体到让我理解这个人为什么会变成这样。',{char:2}),
+  O('An icon, force or monster with almost no need for psychology.','像图腾、天灾或怪物，不太需要心理解释。',{char:-2}),
+  O('Whichever creates the better conflict.','谁能制造更好的冲突就选谁。',{char:-.3})]},
+ {id:'t3',tier:'quick',kind:'scene',prompt:{en:'The last 20 minutes are approaching. What sounds better?',zh:'最后 20 分钟快到了。你更想看哪一种？'},opts:[
+  O('Tiny earlier decisions begin colliding with each other.','前面不起眼的小选择开始连环撞在一起。',{caus:2}),
+  O('A perfectly staged run of reveals, reversals and set pieces.','一连串精心设计的揭晓、反转和大场面。',{caus:-2}),
+  O('I care more about the final mood than how we get there.','我更在乎最后留下的感觉，怎么到那里其次。',{affect:-.6})]},
+ {id:'t4',tier:'quick',kind:'scene',prompt:{en:'A scene has to make you cry. Keep one tool.',zh:'这一场必须把人看哭。只能留一种手段。'},opts:[
+  O('A small object or gesture that mattered earlier.','前面出现过的小物件或小动作。',{affect:2}),
+  O('A huge confession from the actor.','演员来一段彻底摊牌的大独白。',{affect:-1.5,char:.3}),
+  O('The score. Let the orchestra earn its paycheck.','配乐。让乐团把工资挣回来。',{affect:-2}, {score:1})]},
+ {id:'t5',tier:'quick',kind:'scene',prompt:{en:"A director is brilliant. How do you most enjoy noticing it?",zh:'一个导演特别厉害。你最享受哪种“厉害”？'},opts:[
+  O('I forget the camera is there.','我最好忘记摄像机的存在。',{form:-2}),
+  O('Within minutes I can feel their cuts, colors, framing or sound.','几分钟内就能感到这是他/她的剪辑、色彩、构图或声音。',{form:2}),
+  O('No fixed preference.','没固定偏好。',{})]},
+ {id:'t6',tier:'quick',kind:'scene',prompt:{en:'A supporting character mainly exists to change the hero. Your reaction?',zh:'一个配角主要就是为了改变主角而存在。你会？'},opts:[
+  O('Fine. A memorable role does not need a private novel.','没问题。一个好用又难忘的角色不必人人都有完整人生。',{char:-1.8}),
+  O('It starts bothering me unless they feel like a person too.','如果他/她没有自己的感觉，我会越来越出戏。',{char:2}),
+  O('Depends how much screen time they get.','看戏份多少。',{})]},
+ {id:'t7',tier:'quick',kind:'scene',prompt:{en:'A coincidence creates the climax.',zh:'高潮是由一个巧合触发的。'},opts:[
+  O('I can roll with it if the payoff is good.','只要高潮够爽，我可以接受。',{caus:-1.6}),
+  O('I would rather earlier choices caused it.','我更希望这是前面人物选择造成的。',{caus:2}),
+  O('Genre matters more than the rule.','更看类型，不一刀切。',{})]},
+ {id:'t8',tier:'quick',kind:'scene',prompt:{en:'A movie has something to say. Best delivery?',zh:'电影有话想说。你更喜欢它怎么说？'},opts:[
+  O('I realize it gradually from what keeps happening.','让我从反复发生的事情里慢慢自己意识到。',{affect:2,caus:.5}),
+  O('Say it clearly if the idea is strong enough.','观点够好就可以说清楚，不必藏。',{affect:-2}),
+  O('Either—just do not repeat it five times.','都行，别重复五遍就好。',{affect:.2})]},
+ {id:'t9',tier:'quick',kind:'duel',prompt:{en:'One tonight. Which are you more likely to choose?',zh:'今晚只能选一部。你更可能点开哪部？'},sub:{en:'Weak evidence: familiarity, stars and mood can overwhelm the axis.',zh:'只算弱证据：熟悉度、演员和当天心情都可能盖过电影语言。'},opts:[
+  O('Past Lives (2023)','《过往人生》(2023)',{affect:1.1,form:-.5,char:.4}),
+  O('Titanic (1997)','《泰坦尼克号》(1997)',{affect:-1.1,caus:-.4,form:.4}),
+  O("Haven't seen both / can't choose",'没都看过 / 选不出来',{})]},
+ {id:'t10',tier:'quick',kind:'duel',prompt:{en:'Different pleasures. Which one pulls harder?',zh:'完全不同的快乐。哪一部对你吸引力更强？'},opts:[
+  O('Manchester by the Sea (2016)','《海边的曼彻斯特》(2016)',{char:1.2,affect:.6,form:-.4}),
+  O('Raiders of the Lost Ark (1981)','《夺宝奇兵》(1981)',{char:-1.1,caus:-.4,affect:-.2}),
+  O("Haven't seen both / can't choose",'没都看过 / 选不出来',{})]},
+ {id:'t11',tier:'quick',kind:'scene',prompt:{en:'Halfway through, the movie suddenly changes style.',zh:'电影演到一半，突然换了一套风格。'},opts:[
+  O('Great—if the new style grows out of what the movie became.','很好，只要新风格是从电影本身长出来的。',{form:1,caus:1.3}),
+  O('Great—I love a bold rug-pull even for its own sake.','很好，我就爱这种突然掀桌，哪怕主要是为了惊喜。',{form:1.6,caus:-1.1}),
+  O('I usually prefer one language carried through cleanly.','我通常更喜欢一种电影语言从头贯彻到底。',{form:-1.2})]},
+ {id:'t12',tier:'quick',kind:'scene',prompt:{en:'Which review line makes you more curious?',zh:'哪句短评更容易让你立刻想看？'},opts:[
+  O('“Every scene feels inevitable only after it happens.”','“每一场戏都是发生以后才发现早就注定。”',{caus:2}),
+  O('“I had no idea what the movie would do next.”','“我全程都猜不到它下一步要干嘛。”',{caus:-1,form:1}),
+  O('“The whole theater was crying.”','“全场都哭了。”',{affect:-1})]},
+ {id:'t13',tier:'deep',kind:'scene',prompt:{en:'An adaptation merges three book characters into one.',zh:'改编电影把原著三个角色合成了一个。'},opts:[
+  O('Smart compression if the movie flows better.','只要电影更顺，聪明的压缩没问题。',{char:-1.3,caus:-.7}),
+  O('Risky: the missing individual motives may matter more than efficiency.','危险：被删掉的个人动机可能比效率更重要。',{char:1.8}),
+  O('I judge it only as a movie.','我只按电影本身判断。',{char:-.2})]},
+ {id:'t14',tier:'deep',kind:'scene',prompt:{en:'A musical number stops the plot for four minutes.',zh:'一个歌舞段落让剧情原地停了四分钟。'},opts:[
+  O('If the number is great, stopping is the point.','歌舞够好，停下来本身就是意义。',{caus:-1,form:1.4,affect:-.8}),
+  O('I want the song to change a relationship or situation.','我希望唱完以后人物关系或局面真的变了。',{caus:1.7,char:.4}),
+  O('Depends entirely on the genre.','完全看类型。',{})]},
+ {id:'t15',tier:'deep',kind:'scene',prompt:{en:'A symbol keeps returning.',zh:'一个象征物反复出现。'},opts:[
+  O('Best when its meaning changes through use.','最好每次出现都因为经历不同而改变含义。',{affect:1.6,caus:.8}),
+  O('I enjoy a bold motif even when the meaning is obvious.','就算含义很明显，我也喜欢强烈反复的意象。',{affect:-1.3,form:1}),
+  O('I rarely care about symbols either way.','我通常不太在意象征。',{form:-.3})]},
+ {id:'t16',tier:'deep',kind:'scene',prompt:{en:'An actor transforms so hard you can see the transformation happening.',zh:'演员演到你能明显看见“我现在正在大变身”。'},opts:[
+  O('Love it. Virtuosity can be part of the show.','喜欢。炫技本来就可以是表演的一部分。',{form:1.2,affect:-.5},{flex:1}),
+  O('I prefer the acting to disappear into behavior.','我更喜欢表演消失进人物行为里。',{form:-1.1,char:1}),
+  O('Depends whether the scene partner can match it.','看对手戏能不能接住。',{char:.6})]},
+ {id:'t17',tier:'deep',kind:'scene',prompt:{en:'A fairy tale uses deliberately simple characters.',zh:'一则寓言故意把人物写得很简单。'},opts:[
+  O('Perfectly valid. The shape can matter more than psychology.','完全成立。寓言的形状可以比心理细节更重要。',{char:-2}),
+  O('I still want little contradictions that make them feel alive.','我还是想看到一点矛盾，让他们像活人。',{char:1.8}),
+  O('Depends how long the movie is.','看电影有多长。',{})]},
+ {id:'t18',tier:'deep',kind:'scene',prompt:{en:'A genre movie gives you exactly the scene you expected.',zh:'类型片准时给了你早就知道会来的那一场。'},opts:[
+  O('Satisfying. Familiar beats exist for a reason.','爽。套路能活这么久不是没原因。',{caus:-1.2,affect:-.5}),
+  O('I need some local twist or consequence that makes it this movie’s scene.','我需要一点只属于这部片的变化或后果。',{caus:1.4,form:.4}),
+  O('Execution decides everything.','全看执行。',{})]},
+ {id:'t19',tier:'deep',kind:'scene',prompt:{en:'The happy ending is gorgeous, but one relationship changed very quickly.',zh:'结局拍得很美，但其中一段关系转变得特别快。'},opts:[
+  O('The emotional landing can justify compression.','情绪落得准，过程压缩一点也能接受。',{caus:-1.4,affect:-.7}),
+  O('I keep thinking about the missing steps.','我会一直惦记中间少掉的那些步骤。',{caus:1.8,char:.6}),
+  O('Depends whether I liked them together.','看我吃不吃这对关系。',{})]},
+ {id:'t20',tier:'deep',kind:'scene',prompt:{en:'The director refuses to explain one major mystery.',zh:'导演拒绝解释一个很大的谜团。'},opts:[
+  O('Fine if the unanswered part creates a better aftertaste.','只要不解释能留下更好的余味，就没问题。',{affect:1,form:.6}),
+  O('I want enough rules to know the mystery is not just fog.','我至少要知道这不是拿雾气冒充规则。',{caus:1.2}),
+  O('I usually want the answer.','我通常还是想知道答案。',{affect:-.4,caus:-.4})]},
+ {id:'t21',tier:'deep',kind:'scene',prompt:{en:'The sound design is almost showing off.',zh:'声音设计明显有点在“炫”。'},opts:[
+  O('Good. Let sound become part of the movie’s personality.','好。声音就该成为电影个性的一部分。',{form:2}),
+  O('I prefer noticing the scene, not the sound team.','我更希望注意到这一场，而不是注意到声音部门。',{form:-2}),
+  O('Only if the theater is good enough.','得看放映条件够不够好。',{form:.5},{format:1})]},
+ {id:'t22',tier:'deep',kind:'scene',prompt:{en:'A character betrays their own stated values.',zh:'一个人物做了完全背离自己口头价值观的事。'},opts:[
+  O('Interesting if the movie makes the contradiction feel theirs.','只要电影让我相信这种矛盾属于这个人，就很有意思。',{char:1.5,caus:.7}),
+  O('Useful if the betrayal creates a much stronger story turn.','如果能换来更强的剧情转折，也可以。',{char:-1,caus:-1.2}),
+  O('I need the film to explain it clearly.','我需要电影把原因讲清楚。',{affect:-.5,caus:.7})]},
+ {id:'t23',tier:'deep',kind:'duel',prompt:{en:'Which sounds closer to your ideal movie night?',zh:'哪一部更接近你的理想电影之夜？'},opts:[
+  O('A Separation (2011)','《一次别离》(2011)',{char:1,caus:1.2,affect:.5,form:-.4}),
+  O('Knives Out (2019)','《利刃出鞘》(2019)',{char:-.4,caus:-1.1,affect:-.3,form:.5}),
+  O("Haven't seen both / can't choose",'没都看过 / 选不出来',{})]},
+ {id:'t24',tier:'deep',kind:'scene',prompt:{en:'The camera keeps returning to one oddly specific detail.',zh:'镜头总在反复拍一个莫名具体的小细节。'},opts:[
+  O('I start tracking it. The pattern is probably doing something.','我会开始记它每次出现的位置——这个重复多半有用。',{affect:.8,form:.6}),
+  O('If the detail is bare feet, I already know which dimension we fell into.','如果那个细节是赤脚，我大概知道我们掉进哪个维度了。',{form:.2},{feet:2}),
+  O('I probably ignore it until the movie gives me a reason not to.','在电影给出理由以前，我大概不会特别在意。',{form:-.8})]}
+];
+
+const watchQuestions=[
+ {id:'w1',tier:'quick',kind:'habit',prompt:{en:'Credits roll. Your hand moves toward…',zh:'字幕一出来，你的手最可能伸向……'},opts:[
+  O('Nothing. I want a minute before anyone talks.','什么都不碰。先安静一分钟。',{engage:-1.6}),
+  O('My rating / diary / watchlist app.','评分、短评或观影记录软件。',{archive:2,engage:.5}),
+  O('Reviews, interviews or “ending explained.”','影评、访谈，或者“结局解析”。',{engage:2,archive:.4})]},
+ {id:'w2',tier:'quick',kind:'habit',prompt:{en:'A favorite is rereleased in theaters tonight.',zh:'你喜欢的一部老片今晚重映。'},opts:[
+  O('Nice, but I can watch it at home whenever.','不错，但我在家随时都能看。',{venue:-2}),
+  O('If the screen / format / occasion is special, I am tempted.','如果银幕、格式或场合够特别，我会心动。',{venue:2}),
+  O('Only if friends are going.','主要看有没有人一起。',{venue:.3})]},
+ {id:'w3',tier:'quick',kind:'habit',prompt:{en:'You loved Part 1. Parts 2–5 already exist.',zh:'你很喜欢第一部，而 2–5 部已经都出了。'},opts:[
+  O('I will probably sample the best-looking sequel.','大概挑一部最顺眼的续集看看。',{scope:-1.7}),
+  O('This has quietly become a project.','很好，这已经悄悄变成一个补完项目了。',{scope:2},{completion:1}),
+  O('I wait until one sequel specifically interests me.','等到哪一部真的吸引我再说。',{scope:-1})]},
+ {id:'w4',tier:'quick',kind:'habit',prompt:{en:'You suddenly cannot remember where you first saw a favorite movie.',zh:'你突然想不起最喜欢的一部片当年到底在哪里看的。'},opts:[
+  O('Annoying for ten seconds, then I move on.','烦十秒，然后算了。',{archive:-2}),
+  O('I may actually try to reconstruct it.','我可能真的会去翻记录把它考古出来。',{archive:2},{milestone:1}),
+  O('I only care if there was a good story attached.','除非那次观影本身有故事。',{archive:.4})]},
+ {id:'w5',tier:'quick',kind:'habit',prompt:{en:'The best seats are gone.',zh:'最好的座位已经没了。'},opts:[
+  O('A decent seat is a decent seat.','差不多的位置就行。',{venue:-1.6}),
+  O('I would consider another showtime.','我会认真考虑换一场。',{venue:2},{seat:1}),
+  O('Depends on the movie.','看电影值不值得。',{venue:.4})]},
+ {id:'w6',tier:'quick',kind:'habit',prompt:{en:"Mid-movie, something doesn't make sense.",zh:'电影看到一半，有个地方说不通。'},opts:[
+  O('Keep going. Maybe the feeling or answer arrives later.','先看下去，感觉或答案可能后面自己来。',{engage:-1.8}),
+  O('My brain starts testing explanations immediately.','脑子会立刻开始测试各种解释。',{engage:2}),
+  O('I notice it, but park it for later.','会记住，但先放一边。',{engage:.2})]},
+ {id:'w7',tier:'quick',kind:'habit',prompt:{en:'A director you just discovered has 17 films.',zh:'你刚喜欢上的导演有 17 部电影。'},opts:[
+  O('Give me the best two or three.','给我最值得看的两三部就行。',{scope:-2}),
+  O('I am already eyeing the chronological list.','我已经开始看按年份排列的片单了。',{scope:2},{completion:1}),
+  O('I will pick whatever matches my mood.','以后按心情慢慢挑。',{scope:-.8})]},
+ {id:'w8',tier:'quick',kind:'habit',prompt:{en:'A friend asks “good?” the second you leave.',zh:'刚散场，朋友立刻问：“好看吗？”'},opts:[
+  O('I answer from the gut first.','我先凭直觉给一句。',{engage:-1.1}),
+  O('I immediately start explaining what worked and what did not.','我会立刻开始拆哪里有效、哪里不行。',{engage:1.8}),
+  O('I need time before I know.','我得过一会儿才知道。',{engage:-.4})]},
+ {id:'w9',tier:'quick',kind:'habit',prompt:{en:'Your watchlist mostly lives…',zh:'你的“想看”通常存在……'},opts:[
+  O('In my head / mood.','脑子和当天心情里。',{archive:-1.4}),
+  O('In an app, list, notes file or spreadsheet.','应用、清单、备忘录或表格里。',{archive:2}),
+  O('Everywhere, badly.','到处都有，而且很乱。',{archive:.5})]},
+ {id:'w10',tier:'quick',kind:'habit',prompt:{en:'Same movie: easy home stream or special big-screen presentation?',zh:'同一部电影：在家随手看，还是去特殊大银幕放映？'},opts:[
+  O('Home unless the movie truly needs the screen.','除非它真的非大银幕不可，不然在家。',{venue:-1.4}),
+  O('The special presentation is part of the reason to watch.','特殊放映本身就是我想看的理由之一。',{venue:2},{format:1}),
+  O('Whichever fits my schedule.','哪个时间方便选哪个。',{venue:-.7})]},
+ {id:'w11',tier:'deep',kind:'habit',prompt:{en:"A director's cut is 24 minutes longer.",zh:'导演剪辑版多了 24 分钟。'},opts:[
+  O('If I liked the film, of course I want to know.','原版喜欢的话，当然想知道多了什么。',{scope:1.5,engage:.7}),
+  O('Only if people say it meaningfully changes the movie.','除非大家都说它真的改变了电影。',{scope:-.6,engage:.5}),
+  O('One version is usually enough for me.','通常看一个版本就够了。',{scope:-1.6})]},
+ {id:'w12',tier:'deep',kind:'habit',prompt:{en:'A festival runs a six-film retrospective.',zh:'一个影展做六部片的导演回顾展。'},opts:[
+  O('Pick the two I most want.','挑最想看的两部。',{scope:-1.4,venue:1}),
+  O('Six films in a week sounds suspiciously possible.','一周六部听起来居然有点可行。',{scope:2,venue:1.2},{completion:1}),
+  O('I would rather see something new.','我可能更想看新片。',{scope:-.8})]},
+ {id:'w13',tier:'deep',kind:'habit',prompt:{en:'Forty minutes in, you are having a terrible time.',zh:'看到 40 分钟，你已经非常痛苦。'},opts:[
+  O('Stop. Life is short.','关掉。人生很短。',{scope:-1.4,engage:-.4}),
+  O('Finish; I want the full case before the verdict.','看完。判刑以前证据得完整。',{scope:1.2,engage:1.5},{grill:1}),
+  O('Depends whether I am at home or in a theater.','看是在家还是影院。',{venue:.6})]},
+ {id:'w14',tier:'deep',kind:'habit',prompt:{en:'A screening gives out a tiny promotional object.',zh:'一场放映会送一个小小的限定纪念品。'},opts:[
+  O('Cute, but it changes nothing.','可爱，但不会影响决定。',{venue:-.2}),
+  O('Embarrassingly effective.','很丢脸，但确实有效。',{venue:1,archive:1},{trinket:2}),
+  O('I might keep it forever if the movie matters.','电影重要的话，我可能会一直留着。',{archive:1.5})]},
+ {id:'w15',tier:'deep',kind:'habit',prompt:{en:'A rewatch changes your opinion a lot.',zh:'重看以后，你的评价变化很大。'},opts:[
+  O('New opinion replaces the old one.','新评价直接覆盖旧评价。',{archive:-.5}),
+  O('I want both versions of my opinion preserved.','我希望旧的和新的判断都留下。',{archive:2,engage:.6}),
+  O('I mostly care that the rewatch felt different.','我更在意“这次感觉不一样”本身。',{engage:-.6})]},
+ {id:'w16',tier:'deep',kind:'habit',prompt:{en:'A movie you love has a remake in another country.',zh:'你很喜欢的一部电影在另一个国家被翻拍了。'},opts:[
+  O('Curious enough to compare.','会想看看它到底怎么改。',{scope:1,engage:1}),
+  O('No automatic obligation.','完全没有自动补看的义务。',{scope:-1.5}),
+  O('Only if the remake has its own reason to exist.','除非新版本身有明显理由。',{scope:-.5,engage:.4})]},
+ {id:'w17',tier:'deep',kind:'habit',prompt:{en:'After a great movie, the soundtrack is still in your head.',zh:'看完一部很喜欢的电影，配乐还在脑子里。'},opts:[
+  O('I just let it linger.','就让它继续响着。',{engage:-1}),
+  O('I am probably searching the track before I get home.','回家以前我大概已经搜到那首歌了。',{archive:1.2,engage:.4}),
+  O('Depends if I want to preserve the mood or break it.','看我是想留住这个状态，还是赶快跳出来。',{engage:-.3})]},
+ {id:'w18',tier:'deep',kind:'habit',prompt:{en:'You discover a franchise has one notoriously bad installment.',zh:'你发现一个系列里有一部公认特别烂。'},opts:[
+  O('Skip it. I am not doing homework.','跳过。我不是来写作业的。',{scope:-2}),
+  O('Unfortunately, now I need to know how bad.','糟糕，现在反而更想知道有多烂。',{scope:1.6},{completion:1}),
+  O('Only if continuity requires it.','只有剧情必须衔接才看。',{scope:.4})]},
+ {id:'w19',tier:'deep',kind:'habit',prompt:{en:'Movie night starts in 90 minutes. How much planning happens?',zh:'电影还有 90 分钟开始。你会做多少准备？'},opts:[
+  O('Basically none. Press play / show up.','基本不准备。到点开播 / 到场就行。',{venue:-1,engage:-.4}),
+  O('Showtime, seat, format, route—handled.','场次、座位、格式、路线都安排好。',{venue:1.8,archive:.5},{seat:1}),
+  O('Just enough to avoid logistical disaster.','够避免翻车就行。',{venue:.4})]},
+ {id:'w20',tier:'deep',kind:'habit',prompt:{en:'You hit a round-number milestone: movie #500, #1000…',zh:'你刚好看到了第 500、1000……部电影。'},opts:[
+  O('I probably would not know.','我大概根本不会知道。',{archive:-2}),
+  O('I know, and it feels weirdly satisfying.','我知道，而且会有一种奇怪的满足感。',{archive:2},{milestone:2}),
+  O('I only notice if an app tells me.','App 提醒了我才会发现。',{archive:.6})]}
+];
+
+const movieLibrary=[
+ ['The Handmaiden','小姐','Park Chan-wook','朴赞郁',65,40,35,80,'baroque plotting, tactile detail and bold direction','华丽结构、触感细节与强烈导演存在感'],
+ ['Moonlight','月光男孩','Barry Jenkins','巴里·詹金斯',75,70,80,35,'intimate character logic with restrained emotional delivery','亲密的人物逻辑与克制的情绪表达'],
+ ['Mad Max: Fury Road','疯狂的麦克斯4：狂暴之路','George Miller','乔治·米勒',-45,45,-20,95,'pure visual authorship and momentum built from simple roles','以简洁角色驱动纯粹视觉作者性与运动感'],
+ ['All About Eve','彗星美人','Joseph L. Mankiewicz','约瑟夫·L·曼凯维奇',80,40,30,-35,'sharp autonomous characters inside classical construction','古典结构中的锋利自主人物'],
+ ['Alien','异形','Ridley Scott','雷德利·斯科特',25,55,55,55,'clean genre roles, emergent survival logic and atmosphere','清晰类型人物、生长式生存逻辑与氛围'],
+ ['Singin’ in the Rain','雨中曲','Gene Kelly & Stanley Donen','吉恩·凯利 / 斯坦利·多南',-25,-20,-65,80,'openly performed emotion and joyful formal display','高调表演情绪与快乐的形式炫技'],
+ ['Heat','盗火线','Michael Mann','迈克尔·曼',70,55,45,35,'behavioral specificity, consequence and muscular style','行为细节、因果后果与硬朗风格'],
+ ['The Apartment','公寓春光','Billy Wilder','比利·怀尔德',70,35,-10,-25,'classical storytelling with human contradictions','古典叙事与充满矛盾的人物'],
+ ['Do the Right Thing','为所应为','Spike Lee','斯派克·李',55,75,20,95,'social pressure that grows locally inside unmistakable style','在极强作者风格中自然累积的社会压力'],
+ ['Carol','卡罗尔','Todd Haynes','托德·海因斯',80,50,85,25,'subtext, gesture and controlled visual elegance','潜台词、动作细节与克制视觉优雅'],
+ ['Memories of Murder','杀人回忆','Bong Joon-ho','奉俊昊',80,80,60,55,'characters and institutions generating messy consequences','人物与制度共同生长出混乱后果'],
+ ['Network','电视台风云','Sidney Lumet','西德尼·吕美特',70,20,-55,35,'big performances and explicit ideas grounded by people','大表演、直白观点与扎实人物'],
+ ['House','鬼怪屋','Nobuhiko Obayashi','大林宣彦',-70,-45,-55,100,'gleeful icons, maximal style and pure cinematic invention','图标化人物、极端形式与纯电影发明'],
+ ['Portrait of a Lady on Fire','燃烧女子的肖像','Céline Sciamma','瑟琳·席安玛',90,70,95,20,'behavior, looking and silence doing the emotional work','由行为、凝视与沉默完成情绪'],
+ ['Pan’s Labyrinth','潘神的迷宫','Guillermo del Toro','吉尔莫·德尔·托罗',15,35,-5,85,'mythic roles fused with tactile expressive world-building','神话角色与触感强烈的世界营造'],
+ ['The Thing','怪形','John Carpenter','约翰·卡朋特',15,80,55,45,'simple roles inside a brutally coherent pressure system','简单角色置于高度自洽的压力系统'],
+ ['Nashville','纳什维尔','Robert Altman','罗伯特·奥特曼',75,85,70,45,'large ensemble behavior that seems to grow on its own','像自行生长一样的大型群像行为'],
+ ['Whiplash','爆裂鼓手','Damien Chazelle','达米恩·查泽雷',65,15,-55,65,'designed escalation, loud performance and formal control','精密升级、大表演与形式控制'],
+ ['The Wailing','哭声','Na Hong-jin','罗泓轸',45,55,40,55,'genre escalation with ambiguity and unstable interpretation','类型升级、暧昧性与不断摇摆的解释'],
+ ['Tokyo Story','东京物语','Yasujirō Ozu','小津安二郎',85,75,95,-25,'quiet people, quiet consequences, devastating accumulation','安静人物、安静后果与毁灭性的累积'],
+ ['The Truman Show','楚门的世界','Peter Weir','彼得·威尔',65,25,-30,20,'clear design with a human center and legible themes','清晰设计、人物中心与明确主题'],
+ ['Speed Racer','极速赛车手','The Wachowskis','沃卓斯基姐妹',-40,-30,-60,100,'hyper-designed pop cinema that means every color and cut','每个颜色与剪辑都极度有意的流行电影'],
+ ['The Florida Project','佛罗里达乐园','Sean Baker','肖恩·贝克',85,80,80,-20,'behavioral observation and consequences without heavy cueing','行为观察与不靠强提示累积的后果'],
+ ['The Red Shoes','红菱艳','Powell & Pressburger','鲍威尔 / 普莱斯伯格',20,-5,-65,100,'operatic emotion and unapologetic cinematic spectacle','歌剧式情绪与毫不羞怯的电影奇观'],
+ ['The Lives of Others','窃听风暴','Florian Henckel von Donnersmarck','弗洛里安·亨克尔·冯·多纳斯马尔克',80,55,-25,-25,'classical moral drama driven by character change','由人物变化驱动的古典道德戏剧'],
+ ['The Host','汉江怪物','Bong Joon-ho','奉俊昊',40,60,-15,50,'genre mechanics colliding with family and institutional satire','类型机制、家庭与制度讽刺的碰撞'],
+ ['The Umbrellas of Cherbourg','瑟堡的雨伞','Jacques Demy','雅克·德米',35,-5,-80,100,'total musical form with deliberately heightened emotion','完全音乐化形式与刻意抬高的情绪'],
+ ['The Babadook','鬼书','Jennifer Kent','詹妮弗·肯特',70,60,25,40,'psychology, genre rules and metaphor reinforcing each other','心理、类型规则与隐喻互相加固'],
+ ['The Farewell','别告诉她','Lulu Wang','王子逸',75,60,40,-10,'family behavior and cultural tension handled lightly','以轻巧方式处理家庭行为与文化张力'],
+ ['Cure','回路追凶','Kiyoshi Kurosawa','黑泽清',55,75,90,10,'minimal cueing and eerie causal drift','极少情绪提示与诡异的因果漂移']
+].map(x=>({title:{en:x[0],zh:x[1]},director:{en:x[2],zh:x[3]},v:{char:x[4],caus:x[5],affect:x[6],form:x[7]},why:{en:x[8],zh:x[9]}}));
+const directorLibrary=[
+ ['Agnès Varda','阿涅斯·瓦尔达',35,70,70,65,'curious, humane and formally playful','好奇、人文而又形式活泼'],
+ ['Robert Altman','罗伯特·奥特曼',75,90,65,45,'ensemble behavior and emergent social systems','群像行为与自行生长的社会系统'],
+ ['Park Chan-wook','朴赞郁',55,10,15,95,'precise design, sensuality and unmistakable authorship','精密设计、感官性与强烈作者痕迹'],
+ ['Bong Joon-ho','奉俊昊',60,55,-15,60,'genre craft, social systems and controlled tonal shifts','类型手艺、社会系统与受控的调性转换'],
+ ['Céline Sciamma','瑟琳·席安玛',90,70,95,15,'agency, looking and emotional restraint','人物主体性、凝视与情绪克制'],
+ ['George Miller','乔治·米勒',-20,35,-25,90,'kinetic visual thinking and clean genre roles','动能视觉思维与清晰类型角色'],
+ ['Pedro Almodóvar','佩德罗·阿莫多瓦',65,0,-55,90,'heightened feeling with flamboyant formal personality','高浓度情绪与华丽形式个性'],
+ ['Sidney Lumet','西德尼·吕美特',85,65,15,-25,'human conflict, institutions and invisible precision','人物冲突、制度与隐形精密度'],
+ ['Wong Kar-wai','王家卫',70,35,90,95,'memory, mood and immediately recognizable form','记忆、情绪与一眼可认的形式'],
+ ['Hayao Miyazaki','宫崎骏',20,65,20,75,'mythic figures inside richly living worlds','神话式人物置于鲜活世界'],
+ ['Jane Campion','简·坎皮恩',85,60,65,45,'psychological agency and tactile atmosphere','心理主体性与触感氛围'],
+ ['Kathryn Bigelow','凯瑟琳·毕格罗',65,55,30,45,'physical tension grounded in behavior','以人物行为支撑的身体张力'],
+ ['Billy Wilder','比利·怀尔德',70,5,-30,-25,'classical design, wit and readable human motives','古典结构、机智与清晰人类动机'],
+ ['Jordan Peele','乔丹·皮尔',30,5,-40,65,'designed genre machinery with thematic clarity','主题清晰的精密类型机器'],
+ ['Claire Denis','克莱尔·德尼',75,75,95,35,'behavior, bodies and implication over explanation','行为、身体与暗示高于解释'],
+ ['Jacques Demy','雅克·德米',10,-15,-85,100,'music, color and sincere formal excess','音乐、色彩与真诚的形式过剩'],
+ ['Kiyoshi Kurosawa','黑泽清',50,80,90,5,'quiet dread and causal uncertainty','安静恐惧与因果不确定性'],
+ ['Greta Gerwig','格蕾塔·葛韦格',65,10,-25,45,'clear emotional architecture with lively formal choices','清楚的情感结构与活泼形式选择'],
+ ['Akira Kurosawa','黑泽明',35,55,-20,55,'archetypal clarity with muscular staging','原型式清晰度与有力量的调度'],
+ ['Mira Nair','米拉·奈尔',70,65,20,20,'people, communities and social texture','人物、社群与社会质地']
+].map(x=>({name:{en:x[0],zh:x[1]},v:{char:x[2],caus:x[3],affect:x[4],form:x[5]},why:{en:x[6],zh:x[7]}}));
+
+const demoDiary=[
+ {title:'Chicago',rating:5,review:'I love that the movie never apologizes for performing. The songs are not realistic and do not need to be; every number turns the emotion into a stage.'},
+ {title:'The Lord of the Rings: The Fellowship of the Ring',rating:5,review:'Clear archetypes, huge feeling, total commitment. The world feels mythic rather than psychologically fussy, and that is exactly right.'},
+ {title:'Mad Max: Fury Road',rating:4.5,review:'Almost pure motion and design. The characters are simple, but the film gives each action a purpose and never lets the energy sag.'},
+ {title:'Titanic',rating:4.5,review:'Yes, the emotion is obvious. That is not a flaw here. The scale, music and structure are all pushing the same way.'},
+ {title:'The Grand Budapest Hotel',rating:4.5,review:'Designed to the millimeter and proud of it. I would rather have this than anonymous “good taste.”'},
+ {title:'Dunkirk',rating:4,review:'The time structure is a machine, but it creates tension beautifully. I miss fuller characters a little, yet the design wins.'},
+ {title:'Past Lives',rating:3,review:'Beautiful and intelligent, but I stayed outside it. Sometimes restraint becomes distance for me.'},
+ {title:'Nomadland',rating:3,review:'I admire the observation more than I enjoy the film. I wanted a stronger shape and a little more dramatic pressure.'},
+ {title:'Aftersun',rating:3,review:'The fragments are elegant, but the emotional withholding kept me at arm’s length until very late.'},
+ {title:'No Country for Old Men',rating:3.5,review:'Excellent craft, but emotionally cooler than my ideal. I respect it more than I love it.'}
+];
+
+function questionBank(kind,mode){const bank=kind==='taste'?tasteQuestions:watchQuestions;return bank.filter(q=>mode==='deep'||q.tier==='quick')}
+function start(kind,mode='quick'){session={kind,mode,qs:questionBank(kind,mode),idx:0,answers:[],eggs:{}};renderQuestion()}
+function startFlow(mode){flow={mode,step:0};start('taste',mode)}
+function renderQuestion(){const q=session.qs[session.idx],isTaste=session.kind==='taste';state.last=session.kind;save();
+ const color=isTaste?'var(--taste-a)':'var(--watch-a)';const progress=Math.round(session.idx/session.qs.length*100);
+ $('#app').innerHTML=`<section class="page quiz-shell" style="--module-color:${color}">
+   <div class="quiz-top"><div class="progress-track"><div class="progress-fill ${isTaste?'taste-progress':'watch-progress'}" style="width:${progress}%"></div></div><div class="count">${session.idx+1} / ${session.qs.length}</div></div>
+   <div class="question-card">
+    <div class="question-kind">${q.kind==='duel'?L(UI.quiz.duel):q.kind==='habit'?L(UI.quiz.habit):L(UI.quiz.scene)}</div>
+    <h2>${esc(L(q.prompt))}</h2>${q.sub?`<p class="question-sub">${esc(L(q.sub))}</p>`:''}
+    <div class="options">${q.opts.map((o,i)=>`<button class="option-btn" data-answer="${i}"><span class="option-label"><span class="option-key">${String.fromCharCode(65+i)}</span><span>${esc(L(o.text))}</span></span></button>`).join('')}</div>
+   </div>
+   <div class="quiz-bottom"><button class="link-btn" id="backQ" ${session.idx===0?'disabled':''}>← ${L(UI.quiz.back)}</button><button class="link-btn" id="skipQ">${L(UI.quiz.skip)} →</button></div>
+ </section>`;
+ $$('[data-answer]').forEach(b=>b.onclick=()=>answer(+b.dataset.answer));$('#skipQ').onclick=()=>answer(null);$('#backQ').onclick=backAnswer;
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function answer(i){session.answers[session.idx]=i;if(i!=null){const o=session.qs[session.idx].opts[i];for(const [k,v] of Object.entries(o.egg||{}))session.eggs[k]=(session.eggs[k]||0)+v}session.idx++;if(session.idx>=session.qs.length)finish();else renderQuestion()}
+function backAnswer(){if(session.idx<=0)return;session.idx--;rebuildEggs();renderQuestion()}
+function rebuildEggs(){session.eggs={};session.answers.forEach((a,idx)=>{if(a==null)return;const o=session.qs[idx]?.opts[a];if(!o)return;for(const [k,v] of Object.entries(o.egg||{}))session.eggs[k]=(session.eggs[k]||0)+v})}
+function finish(){const axes=session.kind==='taste'?tasteAxes:watchAxes;const totals={},max={};Object.keys(axes).forEach(k=>{totals[k]=0;max[k]=0});
+ session.qs.forEach((q,idx)=>{const a=session.answers[idx];if(a==null)return;const o=q.opts[a];for(const k of Object.keys(axes)){const v=o.w?.[k]||0;totals[k]+=v;max[k]+=Math.abs(v)}});
+ const scores={};Object.keys(axes).forEach(k=>scores[k]=max[k]?Math.max(-100,Math.min(100,totals[k]/max[k]*100)):0);
+ const code=Object.entries(axes).map(([k,a])=>scores[k]>=0?a.posL:a.negL).join('');const types=session.kind==='taste'?tasteTypes:watchTypes;const info=types[code]||{en:[code,'A mixed profile.'],zh:[code,'一份混合型画像。']};
+ const result={kind:session.kind,mode:session.mode,scores,code,title:{en:info.en[0],zh:info.zh[0]},headline:{en:info.en[1],zh:info.zh[1]},eggs:session.eggs,answered:session.answers.filter(x=>x!=null).length};
+ state[session.kind]=result;save();
+ if(flow){if(flow.step===0){flow.step=1;start('watch',flow.mode);return}else flow=null}
+ session=null;
+ renderResults();
+}
+function home(){state.last='home';save();$('#app').innerHTML=`<div class="page">
+<section class="hero"><div class="eyebrow">${L(UI.home.eye)}</div><h1>${L(UI.home.title1)}<br><em>${L(UI.home.title2)}</em></h1><p class="lede">${L(UI.home.lede)}</p><div class="actions"><button class="primary" id="doubleQuick">${L(UI.home.quick)}</button><button class="secondary" id="doubleDeep">${L(UI.home.deep)}</button></div></section>
+<section class="module-grid"><article class="card taste-card"><span class="module-pill"><i class="dot taste-dot"></i>${L(UI.home.tTitle)}</span><h2>${L(UI.home.tSub)}</h2><p>${L(UI.home.tCopy)}</p><div class="button-row"><button class="primary small" id="tasteQuick">${L(UI.home.qQuick)} · 12</button><button class="ghost small" id="tasteDeep">${L(UI.home.qDeep)} · 24</button></div></article>
+<article class="card watch-card"><span class="module-pill"><i class="dot watch-dot"></i>${L(UI.home.wTitle)}</span><h2>${L(UI.home.wSub)}</h2><p>${L(UI.home.wCopy)}</p><div class="button-row"><button class="primary small" style="background:var(--watch-a)" id="watchQuick">${L(UI.home.qQuick)} · 10</button><button class="ghost small" id="watchDeep">${L(UI.home.qDeep)} · 20</button></div></article></section>
+<section class="card"><div class="eyebrow">CINETYPE V2</div><h2>${L(UI.home.pTitle)}</h2><div class="principles"><div class="principle"><b>${L(UI.home.p1a)}</b><span>${L(UI.home.p1b)}</span></div><div class="principle"><b>${L(UI.home.p2a)}</b><span>${L(UI.home.p2b)}</span></div><div class="principle"><b>${L(UI.home.p3a)}</b><span>${L(UI.home.p3b)}</span></div><div class="principle"><b>${L(UI.home.p4a)}</b><span>${L(UI.home.p4b)}</span></div></div></section></div>`;
+ $('#doubleQuick').onclick=()=>startFlow('quick');$('#doubleDeep').onclick=()=>startFlow('deep');$('#tasteQuick').onclick=()=>start('taste','quick');$('#tasteDeep').onclick=()=>start('taste','deep');$('#watchQuick').onclick=()=>start('watch','quick');$('#watchDeep').onclick=()=>start('watch','deep');}
+
+function renderModuleResult(r){const axes=r.kind==='taste'?tasteAxes:watchAxes;const taste=r.kind==='taste';const rc=resultColor(r);const secondary=taste?'var(--taste-b)':'var(--watch-b)';return `<section class="result-wrap" style="--result-color:${rc};--module-color:${taste?'var(--taste-a)':'var(--watch-a)'};--module-secondary:${secondary}">
+ <div class="result-hero"><div class="eyebrow">${taste?L(UI.results.taste):L(UI.results.watch)}</div><div class="result-code">${r.code}</div><div class="result-title">${esc(L(r.title))}</div><p class="result-headline">${esc(L(r.headline))}</p><p class="micro">${L(UI.results.party)}</p></div>
+ <section class="result-section"><div class="section-title-row"><h2>${L(UI.results.axes)}</h2><span class="palette-tag">${r.answered} ${state.lang==='zh'?'题有效回答':'answered'}</span></div><div class="axis-list">${Object.entries(axes).map(([k,a])=>axisCard(k,a,r.scores[k])).join('')}</div>
+ <div class="map-grid">${mapHTML(r,0)}${mapHTML(r,1)}</div></section>
+ ${taste?recommendationsHTML(r):''}
+ <section class="result-section"><div class="section-title-row"><h2>${L(UI.results.eggs)}</h2></div><div class="egg-list">${eggHTML(r)||`<span class="micro">${state.lang==='zh'?'暂无异常。你暂时还活在四个维度里。':'No anomaly yet. You remain safely inside four dimensions.'}</span>`}</div></section>
+ <div class="actions" style="margin-top:14px"><button class="primary" style="background:${rc}" data-share="${r.kind}">${L(UI.results.share)}</button><button class="ghost" data-retake="${r.kind}">${L(UI.results.retake)}</button><button class="ghost" data-nav="grill">${L(UI.results.grill)}</button>${(!state[taste?'watch':'taste'])?`<button class="secondary" data-other="${taste?'watch':'taste'}">${L(UI.results.other)}</button>`:''}</div>
+ </section>`}
+function axisCard(k,a,v){const left=a.neg,right=a.pos;const pos=Math.max(0,Math.min(100,(v+100)/2));const toward=v>=0?right:left;return `<div class="axis-card"><div class="axis-head"><span>${L(a.label)} · ${L(left)} ↔ ${L(right)}</span><span>${pct(v)}% → ${L(toward)}</span></div><div class="bipolar"><i class="axis-dot" style="left:${pos}%"></i></div><p class="axis-statement">${esc(axisStatement(a,v))}</p></div>`}
+function mapHTML(r,which){const axes=r.kind==='taste'?Object.keys(tasteAxes):Object.keys(watchAxes);const defs=r.kind==='taste'?tasteAxes:watchAxes;const pair=which===0?[axes[0],axes[1]]:[axes[2],axes[3]];const title=state.lang==='zh'?(which===0?(r.kind==='taste'?'人物 × 剧情':'观看状态 × 观影场合'):(r.kind==='taste'?'情绪 × 形式':'记录习惯 × 补全倾向')):(which===0?(r.kind==='taste'?'Character × story':'Engagement × venue'):(r.kind==='taste'?'Emotion × form':'Memory × scope'));return `<div class="map-card"><h3>${title}</h3><canvas class="quad" width="660" height="480" data-kind="${r.kind}" data-x="${pair[0]}" data-y="${pair[1]}" aria-label="${title}"></canvas><p class="micro">${L(defs[pair[0]].neg)} ← · → ${L(defs[pair[0]].pos)} &nbsp;&nbsp; / &nbsp;&nbsp; ${L(defs[pair[1]].neg)} ↓ · ↑ ${L(defs[pair[1]].pos)}</p></div>`}
+function recommendationsHTML(r){const mv=rankLib(movieLibrary,r).slice(0,7),ds=rankLib(directorLibrary,r).slice(0,6);return `<section class="result-section" style="--module-color:var(--taste-a);--module-secondary:var(--taste-b)"><div class="reco-grid"><div><div class="section-title-row"><h2>${L(UI.results.movies)}</h2></div><div class="reco-list">${mv.map(x=>recoMovie(x)).join('')}</div></div><div><div class="section-title-row"><h2>${L(UI.results.directors)}</h2></div><div class="reco-list">${ds.map(x=>recoDirector(x)).join('')}</div></div></div><p class="footer-note">${state.lang==='zh'?'这些百分比只是“电影语法相似度”，不是“你有多大概率喜欢”。电影坐标目前仍是原型先验，正式版本应该用大量用户行为逐步校准。':'These percentages are grammar similarity, not “probability you will like it.” Film coordinates are prototype priors and should eventually be calibrated from user behavior.'}</p></section>`}
+function dist(a,b){const ks=['char','caus','affect','form'];const d=Math.sqrt(ks.reduce((s,k)=>s+(a[k]-b[k])**2,0));return Math.max(0,Math.round(100-d/4))}
+function rankLib(lib,r){return lib.map(x=>({...x,match:dist(x.v,r.scores)})).sort((a,b)=>b.match-a.match)}
+function recoMovie(x){return `<div class="reco"><div><b>${esc(L(x.title))}</b><small>${esc(L(x.director))} · ${esc(L(x.why))}</small></div><span class="match">${x.match}% ${L(UI.results.grammar)}</span></div>`}
+function recoDirector(x){return `<div class="reco"><div><b>${esc(L(x.name))}</b><small>${esc(L(x.why))}</small></div><span class="match">${x.match}%</span></div>`}
+function eggHTML(r){const e=r.eggs||{},out=[];if((e.feet||0)>=2)out.push(state.lang==='zh'?'🦶 昆汀裂隙：你的选择出现了可疑的足部异常。':'🦶 Quentin Rift: suspicious podiatric anomaly detected.');if((e.seat||0)>=2)out.push(state.lang==='zh'?'🎟 黄金座位制图师：你已经在研究座位几何。':'🎟 Prime Seat Cartographer: seat geometry has entered the ontology.');if((e.trinket||0)>=2)out.push(state.lang==='zh'?'🔑 限定小物脆弱性：赠品成功污染了决策。':'🔑 Promotional Trinket Vulnerability: the free object successfully contaminated the decision.');if((e.milestone||0)>=2)out.push(state.lang==='zh'?'🔢 芬奇表格气场：连观影里程碑都被你数据化了。':'🔢 Fincher Spreadsheet Aura: even movie milestones became data.');if((e.completion||0)>=3)out.push(state.lang==='zh'?'🌀 系列补完引力井：请小心“都看到第三部了”。':'🌀 Franchise Gravity Well: beware “I already watched three of them.”');if((e.grill||0)>=1)out.push(state.lang==='zh'?'⚖️ 四星检察官：先完整取证，再决定判几年。':'⚖️ Four-Star Prosecutor: full evidence first, sentence later.');if((e.flex||0)>=1)out.push(state.lang==='zh'?'🎭 戏精容忍区：你愿意给真正的炫技留一点空间。':'🎭 Virtuoso Tolerance Zone: genuine showboating gets some room.');if((e.format||0)>=1)out.push(state.lang==='zh'?'🔊 格式敏感体质：屏幕和声音可能改变你的判断。':'🔊 Format-Sensitive Organism: screen and sound may alter the verdict.');return out.map(x=>`<span class="egg">${x}</span>`).join('')}
+function drawQuads(){setTimeout(()=>$$('.quad').forEach(c=>drawQuad(c)),0)}
+function drawQuad(c){const kind=c.dataset.kind,r=state[kind],defs=kind==='taste'?tasteAxes:watchAxes,xk=c.dataset.x,yk=c.dataset.y;if(!r)return;const ctx=c.getContext('2d'),W=c.width,H=c.height,p=70;ctx.clearRect(0,0,W,H);const bg=getComputedStyle(document.documentElement).getPropertyValue('--panel2').trim();ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--line').trim();ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W/2,p);ctx.lineTo(W/2,H-p);ctx.moveTo(p,H/2);ctx.lineTo(W-p,H/2);ctx.stroke();ctx.font='700 17px system-ui';ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted').trim();ctx.textAlign='center';ctx.fillText(L(defs[xk].neg),p,H-28);ctx.fillText(L(defs[xk].pos),W-p,H-28);ctx.fillText(L(defs[yk].pos),W/2,31);ctx.fillText(L(defs[yk].neg),W/2,H-8);const x=p+((r.scores[xk]+100)/200)*(W-2*p),y=H-p-((r.scores[yk]+100)/200)*(H-2*p);ctx.fillStyle=resultColor(r);ctx.shadowColor=resultColor(r);ctx.shadowBlur=24;ctx.beginPath();ctx.arc(x,y,15,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--text').trim();ctx.font='900 21px ui-monospace,monospace';ctx.fillText(r.code,x,y-24)}
+function renderResults(){state.last='results';save();if(!state.taste&&!state.watch){$('#app').innerHTML=`<section class="page page-head"><h1>${state.lang==='zh'?'还没有结果。':'No results yet.'}</h1><p>${state.lang==='zh'?'先去做一份测试。':'Take either quiz first.'}</p><button class="primary" data-nav="home">${L(UI.nav.home)}</button></section>`;bindNav();return}
+ $('#app').innerHTML=`<div class="page">${state.taste?renderModuleResult(state.taste):''}${state.watch?renderModuleResult(state.watch):''}${!state.taste?`<section class="result-section"><p>${L(UI.results.noTaste)}</p></section>`:''}</div>`;bindNav();$$('[data-retake]').forEach(b=>b.onclick=()=>start(b.dataset.retake,'quick'));$$('[data-other]').forEach(b=>b.onclick=()=>start(b.dataset.other,'quick'));$$('[data-share]').forEach(b=>b.onclick=()=>makeShare(state[b.dataset.share]));drawQuads()}
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){const words=text.split(/\s+/);let line='',yy=y;for(const w of words){const test=line?line+' '+w:w;if(ctx.measureText(test).width>maxWidth&&line){ctx.fillText(line,x,yy);line=w;yy+=lineHeight}else line=test}if(line)ctx.fillText(line,x,yy);return yy}
+function makeShare(r){const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;const ctx=canvas.getContext('2d'),h=hashHue(r.code,r.kind),h2=(h+55)%360;ctx.fillStyle='#0b0d12';ctx.fillRect(0,0,1080,1350);const g=ctx.createLinearGradient(0,0,1080,900);g.addColorStop(0,`hsla(${h},88%,60%,.30)`);g.addColorStop(.55,'rgba(11,13,18,0)');g.addColorStop(1,`hsla(${h2},88%,60%,.22)`);ctx.fillStyle=g;ctx.fillRect(0,0,1080,950);ctx.fillStyle=`hsl(${h} 90% 67%)`;ctx.font='900 30px system-ui';ctx.fillText(r.kind==='taste'?(state.lang==='zh'?'CINETYPE / 电影偏好':'CINETYPE / FILM DNA'):(state.lang==='zh'?'CINETYPE / 观影方式':'CINETYPE / WATCHING STYLE'),72,92);ctx.font='950 200px ui-monospace,monospace';ctx.fillText(r.code,62,315);ctx.fillStyle='#f7f3eb';ctx.font='900 60px system-ui';wrapText(ctx,L(r.title),72,430,900,70);ctx.fillStyle='#b8bac2';ctx.font='400 29px system-ui';wrapText(ctx,L(r.headline),72,570,900,43);const axes=r.kind==='taste'?tasteAxes:watchAxes;let y=780;for(const [k,a] of Object.entries(axes)){ctx.fillStyle='#f7f3eb';ctx.font='700 23px system-ui';ctx.textAlign='left';ctx.fillText(L(a.neg),72,y);ctx.textAlign='right';ctx.fillText(L(a.pos),1008,y);ctx.fillStyle='rgba(255,255,255,.13)';ctx.fillRect(72,y+18,936,10);const px=72+((r.scores[k]+100)/200)*936;ctx.fillStyle=`hsl(${h} 90% 67%)`;ctx.beginPath();ctx.arc(px,y+23,13,0,Math.PI*2);ctx.fill();y+=90}ctx.textAlign='left';ctx.fillStyle='#777d88';ctx.font='500 21px system-ui';ctx.fillText(state.lang==='zh'?'连续分数 > 四字母标签。':'Continuous scores > four-letter label.',72,1240);ctx.fillStyle=`hsl(${h2} 90% 70%)`;ctx.font='800 24px system-ui';ctx.fillText('CineType v2',72,1302);canvas.toBlob(async blob=>{if(!blob)return;const file=new File([blob],'cinetype-v2-result.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:`CineType ${r.code}`});return}catch{}}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='cinetype-v2-result.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast(state.lang==='zh'?'分享卡已保存':'Share card saved')},'image/png')}
+
+function renderGrill(){state.last='grill';save();$('#app').innerHTML=`<section class="page"><div class="page-head"><div class="eyebrow">${L(UI.grill.eye)}</div><h1>${L(UI.grill.title)}</h1><p>${L(UI.grill.copy)}</p></div><div class="grill-grid"><section class="panel"><div class="section-title-row"><h2>${L(UI.grill.source)}</h2><span class="palette-tag">${L(UI.grill.local)}</span></div><div class="source-tabs" id="sourceTabs"><button class="active" data-source="letterboxd">Letterboxd</button><button data-source="imdb">IMDb</button><button data-source="douban">豆瓣</button><button data-source="paste">${state.lang==='zh'?'粘贴文本':'Paste text'}</button></div><div class="connector" id="connector"></div><label class="filebox">${L(UI.grill.upload)}<br><span class="micro">${L(UI.grill.uploadSub)}</span><input id="fileInput" type="file" accept=".csv,.txt,text/csv,text/plain"></label><button class="secondary full" id="demoBtn">${L(UI.grill.demo)}</button></section><section class="panel"><div class="section-title-row"><h2>${state.lang==='zh'?'本地画像器':'Local profiler'}</h2><span class="micro" id="importStatus">${L(UI.grill.waiting)}</span></div><div id="importPreview" class="grill-copy">${state.lang==='zh'?'导入文件或载入匿名演示。原型会读取评分分布、文字密度和简单矛盾信号，再与测试结果并排比较。':'Import a file or load the anonymous demo. The prototype reads rating spread, review density and simple contradiction signals, then compares them with your quiz profile.'}</div><button class="primary full" id="grillBtn" disabled>${L(UI.grill.grillBtn)}</button><div id="grillOut" class="grill-copy" style="margin-top:18px"></div></section></div></section>`;
+ let src='letterboxd';function conn(){const c=$('#connector');const text={letterboxd:{en:'Use a Letterboxd account export CSV/ZIP in the production build. Live profile connection remains a server-side placeholder here.',zh:'正式版本建议优先读取 Letterboxd 账号导出的 CSV / ZIP；这个原型里的账号直连仍然只是服务器端占位。'},imdb:{en:'IMDb rating-history CSV works best for a local prototype. Live API connection remains a placeholder.',zh:'本地原型最适合读取 IMDb 评分历史 CSV；实时 API 直连仍然是占位功能。'},douban:{en:'Douban profile crawling is unreliable from a standalone browser app. Keep the URL connector as a backend placeholder and support user exports/paste.',zh:'单文件网页直接抓取豆瓣主页并不稳定。保留网址入口作为后端占位，同时支持用户导出或粘贴记录更实际。'},paste:{en:'Paste one film per line: Title | rating | short review.',zh:'每行一部：片名 | 评分 | 短评。'}};c.innerHTML=`${L(text[src])}${src==='paste'?`<textarea id="pasteBox" placeholder="Moonlight | 5 | quiet but devastating\nTitanic | 4.5 | ..."></textarea><button class="ghost small" id="pasteGo" style="margin-top:10px">${state.lang==='zh'?'读取文本':'Read text'}</button>`:`<input placeholder="${state.lang==='zh'?'账号网址（原型占位）':'Profile URL (placeholder)'}"><button class="ghost small" style="margin-top:10px" id="placeholderBtn">${state.lang==='zh'?'测试连接':'Test connector'}</button>`}`;if($('#placeholderBtn'))$('#placeholderBtn').onclick=()=>toast(state.lang==='zh'?'此版本请使用文件导入':'Use file import in this build');if($('#pasteGo'))$('#pasteGo').onclick=()=>{const t=$('#pasteBox').value.trim();if(!t)return;state.imported={source:'paste',entries:parsePaste(t)};save();importPreview()}}
+ conn();$$('#sourceTabs button').forEach(b=>b.onclick=()=>{$$('#sourceTabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');src=b.dataset.source;conn()});$('#demoBtn').onclick=()=>{state.imported={source:'anonymous demo',entries:demoDiary};save();importPreview()};$('#fileInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const t=await f.text();state.imported={source:f.name,entries:f.name.toLowerCase().endsWith('.csv')?parseCSV(t):parsePaste(t)};save();importPreview()};$('#grillBtn').onclick=grill;if(state.imported)importPreview()}
+function parseCSV(text){const rows=text.replace(/^\ufeff/,'').split(/\r?\n/).filter(Boolean);if(!rows.length)return[];const parseLine=s=>{const out=[];let cur='',q=false;for(let i=0;i<s.length;i++){const ch=s[i];if(ch==='"'){if(q&&s[i+1]==='"'){cur+='"';i++}else q=!q}else if(ch===','&&!q){out.push(cur);cur=''}else cur+=ch}out.push(cur);return out};const h=parseLine(rows[0]).map(x=>x.trim().toLowerCase());const ti=h.findIndex(x=>/title|name|电影|片名/.test(x)),ri=h.findIndex(x=>/rating|score|评分/.test(x)),ci=h.findIndex(x=>/review|comment|notes|短评|评论/.test(x));return rows.slice(1).map(r=>{const c=parseLine(r);return{title:c[ti>=0?ti:0]||'Untitled',rating:+(c[ri]||0)||null,review:c[ci]||''}}).filter(x=>x.title)}
+function parsePaste(text){return text.split(/\r?\n/).filter(Boolean).map(line=>{const p=line.split('|').map(x=>x.trim());return{title:p[0]||'Untitled',rating:+p[1]||null,review:p.slice(2).join(' | ')}})}
+function importPreview(){const e=state.imported?.entries||[],ratings=e.map(x=>x.rating).filter(Number.isFinite),avg=ratings.length?(ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(2):'—',reviewed=e.filter(x=>x.review?.trim()).length;$('#importStatus').textContent=`${e.length} ${state.lang==='zh'?'条记录':'entries'}`;$('#importPreview').innerHTML=`<div class="import-summary"><div class="stat"><b>${e.length}</b><span class="micro">${state.lang==='zh'?'电影':'films'}</span></div><div class="stat"><b>${avg}</b><span class="micro">${state.lang==='zh'?'平均评分':'avg rating'}</span></div><div class="stat"><b>${reviewed}</b><span class="micro">${state.lang==='zh'?'含短评':'with notes'}</span></div></div><p>${state.lang==='zh'?'当前版本只做轻量本地分析；正式版应把结构化证据交给生成式模型写“拷问”，而不是直接把整份日记塞进去。':'This build performs lightweight local analysis. A production version should pass structured evidence to the generative grill rather than dump the whole diary into a model.'}</p>`;$('#grillBtn').disabled=!e.length}
+function grill(){const e=state.imported?.entries||[],txt=e.map(x=>x.review||'').join(' ').toLowerCase(),ratings=e.map(x=>x.rating).filter(Number.isFinite),hi=e.filter(x=>x.rating>=4&&(x.review||'').length>70).length;const sentences=[];if(state.taste)sentences.push(state.lang==='zh'?`你的自报电影偏好是 ${state.taste.code}（${L(state.taste.title)}）。导入记录不会自动证明它正确，只能找矛盾。`:`Your declared Film DNA is ${state.taste.code} (${L(state.taste.title)}). The diary does not prove it; it gives us places to look for contradictions.`);if(hi)sentences.push(state.lang==='zh'?`你有 ${hi} 条高分记录同时写了很长的批评。也就是说，“喜欢”与“没意见”在你的数据里显然不是一回事。`:`${hi} high-rated entries still contain substantial criticism. In this diary, “liked it” clearly does not mean “had no objections.”`);if(/score|music|配乐|音乐/.test(txt))sentences.push(state.lang==='zh'?'你反复注意音乐或声音；正式版应该把“情绪提示”与“纯粹声音审美”分开，否则会把两个不同偏好混为一谈。':'Music/sound recurs in the notes. A production model should separate emotional cueing from pure sonic pleasure rather than treat them as one preference.');if(/character|角色|人物|motivation|动机/.test(txt))sentences.push(state.lang==='zh'?'人物相关词出现得很频繁。下一版可以用实际评论来检验“主体型”分数究竟是稳定口味，还是只是你在不喜欢电影时更爱抓人物逻辑。':'Character language appears repeatedly. A stronger model could test whether your Agentic score is a stable taste or simply the vocabulary you use most when a movie has already lost you.');if(!sentences.length)sentences.push(state.lang==='zh'?'这份样本目前太轻，最诚实的结论是：需要更多有评分、也有文字的记录，才能对测试结果进行真正反驳。':'The honest result is that this sample is too light. We need more entries with both ratings and text before the diary can meaningfully challenge the quiz.');$('#grillOut').innerHTML=sentences.map(s=>`<p>${esc(s)}</p>`).join('')}
+
+function bindNav(){$$('[data-nav]').forEach(b=>b.onclick=()=>navigate(b.dataset.nav))}
+function navigate(n){if(n==='taste')return start('taste','quick');if(n==='watch')return start('watch','quick');session=null;flow=null;if(n==='home')home();else if(n==='grill')renderGrill();else if(n==='results')renderResults()}
+function renderNav(){const n=$('#topnav');n.innerHTML=Object.keys(UI.nav).map(k=>`<button data-nav="${k}">${L(UI.nav[k])}</button>`).join('');bindNav()}
+function rerender(){applyTheme();renderNav();if(session)renderQuestion();else navigate(state.last||'home')}
+$('#langBtn').onclick=()=>{state.lang=state.lang==='en'?'zh':'en';save();rerender()};$('#themeBtn').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';save();rerender()};
+applyTheme();renderNav();navigate(state.last||'home');
+})();
+</script>
+</body>
+</html>

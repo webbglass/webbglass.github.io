@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<title>The Love Afterimage Test · 爱的余像</title>
+<style>
+:root{
+  --bg:#f6f3ee;--surface:#fffdf9;--surface-2:#f0ebe3;--text:#282522;--muted:#706b65;
+  --line:#ddd5ca;--shadow:0 18px 55px rgba(51,44,36,.10);--accent:#735b91;--accent-2:#b47779;
+  --selected:#eee6f7;--selected2:#f4e8e3;--good:#50755f;
+  --w:#9a638f;--t:#547b9a;--a:#60806b;--g:#a47646;--p:#ad6067;
+}
+html[data-theme="dark"]{
+  --bg:#171615;--surface:#211f1d;--surface-2:#2a2724;--text:#f4f0eb;--muted:#b8b0a7;
+  --line:#3b3732;--shadow:0 18px 55px rgba(0,0,0,.28);--accent:#b79bd7;--accent-2:#d99698;
+  --selected:#332b3c;--selected2:#3a2e2b;--good:#8fb59c;
+  --w:#d39bc9;--t:#8bb6d6;--a:#95bea1;--g:#d4aa75;--p:#df8e94;
+}
+*{box-sizing:border-box}
+body{margin:0;background:
+ radial-gradient(circle at 15% -5%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 32rem),
+ radial-gradient(circle at 90% 8%,color-mix(in srgb,var(--accent-2) 10%,transparent),transparent 28rem),var(--bg);
+ color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;line-height:1.6;min-height:100vh}
+button{font:inherit}.app{width:min(920px,100%);margin:0 auto;padding:20px clamp(16px,4vw,40px) 64px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:34px}
+.brand{font-family:Georgia,"Songti SC",serif;font-size:15px;letter-spacing:.02em;color:var(--muted)}
+.controls{display:flex;gap:8px}.iconbtn,.pillbtn{border:1px solid var(--line);background:color-mix(in srgb,var(--surface) 88%,transparent);color:var(--text);border-radius:999px;padding:8px 12px;cursor:pointer;transition:.18s ease;backdrop-filter:blur(10px)}
+.iconbtn:hover,.pillbtn:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+.hero{padding:clamp(20px,5vw,46px) 0 24px}.kicker{font-size:12px;text-transform:uppercase;letter-spacing:.17em;color:var(--accent);font-weight:750;margin-bottom:12px}
+h1{font-family:Georgia,"Songti SC",serif;font-weight:500;font-size:clamp(42px,8vw,76px);line-height:1.03;margin:0;letter-spacing:-.035em}.zh-title{font-size:.83em;letter-spacing:.02em}
+.subtitle{font-size:clamp(18px,3vw,24px);color:var(--muted);max-width:720px;margin:20px 0 0}
+.card{background:color-mix(in srgb,var(--surface) 96%,transparent);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:28px;padding:clamp(22px,5vw,42px)}
+.intro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:26px 0}.mini{background:var(--surface-2);padding:16px;border-radius:18px}.mini strong{display:block;margin-bottom:4px;font-size:14px}.mini span{font-size:13px;color:var(--muted)}
+.note{color:var(--muted);font-size:14px}.primary{border:0;background:var(--text);color:var(--bg);padding:14px 22px;border-radius:999px;font-weight:750;cursor:pointer;transition:.2s ease}.primary:hover{transform:translateY(-2px)}
+.secondary{border:1px solid var(--line);background:var(--surface);color:var(--text);padding:12px 18px;border-radius:999px;cursor:pointer}.secondary:disabled,.primary:disabled{opacity:.38;cursor:not-allowed;transform:none}
+.test-shell{display:none}.progress-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:10px 0 10px}.progress-title{font-size:13px;color:var(--muted)}.progress-count{font-variant-numeric:tabular-nums;font-weight:700}
+.progress-track{height:5px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin-bottom:22px}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;transition:.25s}
+.qnum{font-size:12px;color:var(--accent);font-weight:800;letter-spacing:.15em;text-transform:uppercase}.prompt{font-family:Georgia,"Songti SC",serif;font-size:clamp(23px,4vw,34px);line-height:1.35;margin:10px 0 23px;font-weight:500}
+.instructions{font-size:13px;color:var(--muted);margin-bottom:14px}.options{display:grid;gap:11px}.option{position:relative;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:18px;padding:16px 18px;text-align:left;cursor:pointer;transition:.16s ease;display:flex;gap:14px;align-items:flex-start}.option:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));transform:translateY(-1px)}.option.first{background:var(--selected);border-color:color-mix(in srgb,var(--accent) 60%,var(--line))}.option.second{background:var(--selected2);border-color:color-mix(in srgb,var(--accent-2) 60%,var(--line))}.rank{flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);font-size:12px;font-weight:800;color:var(--muted)}.first .rank{background:var(--accent);color:#fff;border-color:transparent}.second .rank{background:var(--accent-2);color:#fff;border-color:transparent}.option-text{padding-top:1px}
+.navrow{display:flex;justify-content:space-between;gap:12px;margin-top:23px}.navright{display:flex;gap:10px}.clearbtn{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:9px}.clearbtn:hover{color:var(--text)}
+.results{display:none}.result-header{display:flex;justify-content:space-between;gap:16px;align-items:start;flex-wrap:wrap}.result-header h2{font-family:Georgia,"Songti SC",serif;font-weight:500;font-size:clamp(32px,5vw,48px);margin:0}.result-actions{display:flex;gap:8px;flex-wrap:wrap}
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);font-weight:800;margin:34px 0 13px}.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.profile{border:1px solid var(--line);background:var(--surface);border-radius:22px;padding:20px}.profile h3{margin:0 0 6px;font-size:18px}.profile-lede{color:var(--muted);font-size:14px;margin:0 0 18px}
+.barrow{display:grid;grid-template-columns:minmax(116px,1.3fr) 3fr 48px;gap:10px;align-items:center;margin:12px 0}.barlabel{font-size:13px}.bartrack{height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden}.bar{height:100%;border-radius:999px;transition:.6s cubic-bezier(.2,.8,.2,1)}.pct{text-align:right;font-variant-numeric:tabular-nums;font-size:13px;font-weight:750}
+.insight{background:var(--surface-2);border-radius:20px;padding:20px;margin-top:16px}.insight strong{font-family:Georgia,"Songti SC",serif;font-size:19px}.insight p{margin:8px 0 0;color:var(--muted);font-size:14px}.dialects{display:grid;grid-template-columns:1fr 1fr;gap:16px}.dialect-card{border:1px solid var(--line);border-radius:20px;padding:18px}.dialect-card h4{margin:0 0 12px}.chipline{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-size:12px;background:var(--surface-2)}.chip b{color:var(--accent)}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.metric{background:var(--surface-2);padding:18px;border-radius:18px}.metric .big{font-family:Georgia,"Songti SC",serif;font-size:31px;line-height:1.1}.metric .label{font-size:12px;color:var(--muted);margin-top:5px}.metric .small{font-size:11px;color:var(--muted);margin-top:6px}
+.footer-note{font-size:12px;color:var(--muted);margin-top:24px;border-top:1px solid var(--line);padding-top:18px}.restart{margin-top:18px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--text);color:var(--bg);padding:10px 14px;border-radius:999px;font-size:13px;transition:.2s;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:720px){.intro-grid,.profile-grid,.dialects,.metrics{grid-template-columns:1fr}.topbar{margin-bottom:14px}.card{border-radius:22px}.barrow{grid-template-columns:105px 1fr 44px}.result-actions{width:100%}.result-actions button{flex:1}.prompt{font-size:24px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand" id="brand">THE LOVE AFTERIMAGE TEST</div>
+    <div class="controls">
+      <button class="pillbtn" id="langBtn" aria-label="Switch language">中文</button>
+      <button class="iconbtn" id="themeBtn" aria-label="Toggle color theme">◐</button>
+    </div>
+  </div>
+
+  <main id="intro">
+    <section class="hero">
+      <div class="kicker" id="kicker">A reflective, semi-projective prototype</div>
+      <h1><span id="mainTitle">The Love Afterimage</span><br><span class="zh-title" id="altTitle">爱的余像</span></h1>
+      <p class="subtitle" id="subtitle">What kinds of love stay with you — and what kinds do you instinctively leave behind?</p>
+    </section>
+    <section class="card">
+      <p id="introText">Imagine one person you love romantically — or someone with whom you could imagine that kind of intimacy. Twenty small scenes will follow. In each one, choose the detail that catches you <b>FIRST</b>, then the one that matters <b>SECOND</b>. Go with your first reaction rather than what a “good partner” should do.</p>
+      <div class="intro-grid">
+        <div class="mini"><strong id="mini1h">Two profiles</strong><span id="mini1b">What makes you feel loved, and how you tend to love.</span></div>
+        <div class="mini"><strong id="mini2h">Five proportions</strong><span id="mini2b">No forced “primary type”; your whole distribution matters.</span></div>
+        <div class="mini"><strong id="mini3h">Hidden dialects</strong><span id="mini3b">Nuances such as quiet presence, reassurance, relief, keepsakes, and comfort touch.</span></div>
+      </div>
+      <p class="note" id="disclaimer">This is a reflective prototype, not a diagnostic or clinically validated psychological test.</p>
+      <button class="primary" id="startBtn">Begin the 20 scenes</button>
+    </section>
+  </main>
+
+  <main class="test-shell" id="testShell">
+    <div class="progress-head"><div class="progress-title" id="progressTitle">Follow what catches first.</div><div class="progress-count" id="progressCount">01 / 20</div></div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <section class="card">
+      <div class="qnum" id="qnum">SCENE 01</div>
+      <div class="prompt" id="prompt"></div>
+      <div class="instructions" id="instructions">Choose FIRST, then SECOND. Click a selected choice again to undo it.</div>
+      <div class="options" id="options"></div>
+      <div class="navrow">
+        <div><button class="clearbtn" id="clearBtn">Clear this scene</button></div>
+        <div class="navright"><button class="secondary" id="backBtn">Back</button><button class="primary" id="nextBtn" disabled>Next</button></div>
+      </div>
+    </section>
+  </main>
+
+  <main class="results" id="results">
+    <section class="card">
+      <div class="result-header">
+        <div><div class="kicker" id="resultKicker">YOUR LOVE AFTERIMAGE</div><h2 id="resultTitle">Two directions of affection</h2></div>
+        <div class="result-actions"><button class="secondary" id="copyBtn">Copy text</button><button class="primary" id="imageBtn">Share / save image</button></div>
+      </div>
+      <div class="section-title" id="profilesHeading">Your five-part profiles</div>
+      <div class="profile-grid"><div class="profile" id="receiveProfile"></div><div class="profile" id="giveProfile"></div></div>
+      <div class="insight" id="mainInsight"></div>
+      <div class="section-title" id="dialectHeading">Your strongest dialects</div>
+      <div class="dialects"><div class="dialect-card" id="receiveDialects"></div><div class="dialect-card" id="giveDialects"></div></div>
+      <div class="section-title" id="metricsHeading">Shape of the profile</div>
+      <div class="metrics" id="metrics"></div>
+      <div class="footer-note" id="resultNote">Low relative preference does not mean dislike. The percentages describe which forms of affection won when several plausible forms competed. Treat the result as a conversation starter, not a diagnosis.</div>
+      <button class="secondary restart" id="restartBtn">Retake / edit answers</button>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const L={
+ W:{en:'Words of Affirmation',zh:'肯定与言语',color:'var(--w)'},
+ T:{en:'Quality Time',zh:'专注相处',color:'var(--t)'},
+ A:{en:'Acts of Service',zh:'行动照料',color:'var(--a)'},
+ G:{en:'Receiving Gifts',zh:'礼物与心意',color:'var(--g)'},
+ P:{en:'Physical Touch',zh:'身体接触',color:'var(--p)'}
+};
+const D={
+ 'W-recognition':{en:'Specific recognition',zh:'具体看见'},'W-reassurance':{en:'Reassurance',zh:'安心确认'},'W-encouragement':{en:'Encouragement',zh:'鼓励支持'},
+ 'T-focus':{en:'Focused attention',zh:'专注陪伴'},'T-shared':{en:'Shared experience',zh:'共同行动'},'T-quiet':{en:'Quiet presence',zh:'安静共处'},
+ 'A-relief':{en:'Relief',zh:'替你减负'},'A-anticipate':{en:'Anticipation',zh:'预先留意'},'A-follow':{en:'Follow-through',zh:'落实与可靠'},
+ 'G-keepsake':{en:'Symbol / keepsake',zh:'纪念与象征'},'G-thought':{en:'“Thought of you”',zh:'“看见就想起你”'},'G-ritual':{en:'Curated ritual',zh:'挑选与仪式'},
+ 'P-comfort':{en:'Comfort touch',zh:'安抚式接触'},'P-everyday':{en:'Everyday affection',zh:'日常亲昵'},'P-intimacy':{en:'Romantic intimacy',zh:'浪漫亲密'}
+};
+function O(en,zh,lang,dialect){return{en,zh,lang,dialect}}
+const Q=[
+{dir:'R',en:'It has been an awful week. Friday night finally becomes quiet. Which detail would stay in your memory afterward?',zh:'这一周糟透了。周五晚上终于安静下来。事后回想，哪个细节最容易留在你心里？',o:[
+O('They make something simple to eat and quietly take tomorrow’s most annoying task off your plate.','TA随手弄了点吃的，又不声不响地把你明天最烦的一件事接了过去。','A','A-relief'),
+O('They sit with you, phone somewhere else, and let the evening stretch without needing to accomplish anything.','TA把手机放到一边，就这样和你待着；晚上可以慢慢过去，不必非要做成什么。','T','T-quiet'),
+O('They say, almost matter-of-factly, “I saw how much that took out of you. I knew you’d keep going.”','TA很平静地说：“我知道这阵子把你累坏了。也知道你会撑过来。”','W','W-encouragement'),
+O('Before asking what happened, they simply hold you for a while.','TA没有急着问发生了什么，只是先抱了你一会儿。','P','P-comfort')]},
+{dir:'G',en:'Your partner has something tomorrow that matters enormously to them. They’re nervous, although pretending not to be. What do you find yourself doing first?',zh:'伴侣明天有一件非常重要的事。TA其实很紧张，只是假装若无其事。你最自然的第一反应通常是什么？',o:[
+O('Checking the practical details with them so nothing stupid derails tomorrow.','陪TA把实际细节再过一遍，免得明天被某个低级意外绊住。','A','A-follow'),
+O('Telling them exactly what you think they’re good at—and why you believe they’ll manage it.','具体告诉TA：你觉得TA哪里做得很好，以及你为什么相信TA能应付。','W','W-encouragement'),
+O('Pulling them away from preparation for twenty minutes in which they get your full attention.','把TA从准备工作里拉出来二十分钟，这段时间里你只专心陪TA。','T','T-focus'),
+O('Reaching for their hand, kissing their forehead, or drawing them against you.','牵住TA的手、亲一下额头，或把TA拉近一点。','P','P-comfort')]},
+{dir:'R',en:'You haven’t seen each other for several days. At the station or airport, which moment feels most like the real reunion?',zh:'你们几天没见。在车站或机场，哪个瞬间最像“终于真的见到了”？',o:[
+O('The instant they grin and pull you close.','TA一笑着走过来就把你拉进怀里的那一刻。','P','P-intimacy'),
+O('Later, they hand you a ridiculous little thing they saw somewhere and immediately associated with you.','后来TA递给你一个有点莫名其妙的小东西——路上看到时第一反应就是想到你。','G','G-thought'),
+O('You discover they kept the rest of the evening empty. Nobody has to rush anywhere.','你发现TA特意把之后的晚上都空出来了，谁也不用赶时间。','T','T-focus'),
+O('They tell you one oddly specific thing about you that they missed.','TA说起一个非常具体、甚至有点奇怪的“我这几天最想念你这个地方”。','W','W-reassurance')]},
+{dir:'G',en:'Your partner calls with unexpectedly wonderful news. Your most natural reaction is:',zh:'伴侣打来电话，说了一个完全出乎意料的好消息。你最自然的反应是：',o:[
+O('Immediately telling them what about this makes you particularly proud of them.','立刻告诉TA，这件事里究竟哪一点最让你为TA骄傲。','W','W-recognition'),
+O('Pulling them into a ridiculous celebratory hug or kiss the moment you can.','一见到TA就来一个夸张的庆祝拥抱或亲吻。','P','P-intimacy'),
+O('Finding a way to turn the evening into a small celebration together.','想办法把今晚变成一个只属于你们的小庆祝。','T','T-shared'),
+O('Getting or making some little thing that marks the occasion.','买或做一个小东西，把这个时刻留下来。','G','G-keepsake')]},
+{dir:'R',en:'A birthday plan goes completely wrong—weather, cancellation, whatever. Which surviving detail would rescue the day most?',zh:'生日计划彻底泡汤了——天气、临时取消，什么原因都可能。剩下哪一个细节最能把这一天“救回来”？',o:[
+O('“Forget the plan. I still want the day with you,” followed by an improvised evening together.','“计划算了，我还是想把今天留给你。”然后两个人临时拼出一个晚上。','T','T-shared'),
+O('A handwritten note containing one observation that gets this past year exactly right.','一张手写纸条，里面有一句话恰好说中了你这一年的某个东西。','W','W-recognition'),
+O('They handle the refunds, calls, food and other irritating fallout so you don’t have to.','TA把退款、电话、吃饭和那些扫兴的残局都处理掉，不让你操心。','A','A-follow'),
+O('They produce one small, deeply personal thing they’d been saving for today.','TA拿出一件不贵但非常私人、一直留到今天才给你的东西。','G','G-ritual')]},
+{dir:'G',en:'Your partner is ill enough to be miserable but not seriously sick. Left to your own instincts, you:',zh:'伴侣病得挺难受，但并不严重。完全按本能来，你通常会：',o:[
+O('Start quietly managing food, medicine, water, chores and whatever else needs doing.','默默开始管吃的、药、水、家务，以及眼下所有需要处理的事。','A','A-anticipate'),
+O('Stay nearby, even if you’re each doing separate things.','待在附近；哪怕各做各的，也不太想离开。','T','T-quiet'),
+O('Leave them something like, “You don’t have to be useful today. I’m here.”','跟TA说类似：“你今天什么都不用撑着做。我在这儿。”','W','W-reassurance'),
+O('Bring the exact strange snack, object, or comfort thing you know they like when they’re sick.','找来那个你知道TA生病时偏偏会想要的奇怪零食、小物件或安慰品。','G','G-thought')]},
+{dir:'R',en:'You’ve failed at something you genuinely cared about. You don’t really want advice yet. Which scene has the strongest pull?',zh:'你在一件真正很在乎的事上失败了。现在还不想听建议。下面哪个画面最有吸引力？',o:[
+O('They stay beside you and allow silence to remain silence.','TA就待在旁边，也允许沉默只是沉默。','T','T-quiet'),
+O('They ask one practical question and remove one ugly consequence from your plate.','TA只问一个实际问题，然后替你处理掉失败带来的某个麻烦后果。','A','A-relief'),
+O('They put a familiar little object or treat beside you—something attached to a private memory.','TA把一个熟悉的小物件或小吃放到你旁边——和你们之间某段私人记忆有关。','G','G-keepsake'),
+O('They rest against you or wrap an arm around you without trying to talk you out of feeling bad.','TA靠着你或把手臂环过来，并不试图劝你“别难过了”。','P','P-comfort')]},
+{dir:'G',en:'Nothing important is happening. You’re grocery shopping together on an ordinary evening. What are you most likely to do without thinking about it?',zh:'什么重要的事都没有。只是普通晚上一起买菜。你最可能不经思考就做什么？',o:[
+O('Notice they’re tired and automatically take the awkward or heavy part of the job.','注意到TA累了，自然而然把重的、麻烦的那部分接过来。','A','A-anticipate'),
+O('Slip their favorite snack into the cart because you saw it.','看到TA爱吃的东西，就顺手塞进购物车。','G','G-thought'),
+O('Touch their back as you pass, bump shoulders, link hands for a moment.','经过时碰一下后背、撞撞肩，或者牵一会儿手。','P','P-everyday'),
+O('Let a ten-minute errand turn into wandering around and talking together.','让本来十分钟的采购不知不觉变成一起闲逛、说话。','T','T-shared')]},
+{dir:'R',en:'You’re together in an unfamiliar city. Looking back later, which tiny detail would most likely acquire disproportionate emotional weight?',zh:'你们一起去了一个陌生城市。以后回想，哪个小细节最可能莫名其妙地变得很有分量？',o:[
+O('They quietly take care of the bag, route, ticket or logistical nuisance when you’re tired.','你累的时候，TA默默接过包、路线、车票或其他烦人的实际问题。','A','A-anticipate'),
+O('Their knee stays against yours on the bus; your hands keep finding each other.','坐公交时膝盖一直挨着；手也总是不知不觉碰到一起。','P','P-everyday'),
+O('They spot some tiny local thing that’s absurdly “you” and get it.','TA看到一个当地小东西，觉得“这也太像你了”，于是买下来。','G','G-thought'),
+O('At some point they say, “You make strange places feel a little like home.”','某个时候TA说：“和你在一起，陌生地方也有点像家。”','W','W-reassurance')]},
+{dir:'G',en:'You’ve had a small argument. Nothing catastrophic, but the room still feels slightly wrong. Your instinctive peace offering is:',zh:'你们刚吵了一个小架。不严重，但空气里还有点不对劲。你本能的“和好动作”是：',o:[
+O('Saying plainly what you regret and what you don’t want them to misunderstand about how you feel.','把自己后悔的地方说清楚，也说清楚你最不希望TA误会的感情。','W','W-reassurance'),
+O('Fixing the concrete thing that caused the argument—or changing what you’ll do next time.','把引起争执的具体问题解决掉，或者直接改变下次的做法。','A','A-follow'),
+O('Offering your hand or a hug when it seems welcome.','在感觉对方愿意的时候，伸手或给一个拥抱。','P','P-comfort'),
+O('Leaving some tiny peace token—their drink, a snack, something connected to an inside joke.','留下一点小小的和好信号：TA爱喝的东西、小吃，或和你们内部梗有关的玩意。','G','G-ritual')]},
+{dir:'R',en:'It’s an entirely ordinary Tuesday. Which of these would unexpectedly get to you?',zh:'只是一个再普通不过的周二。下面哪件事会出乎意料地戳中你？',o:[
+O('Something minor you were almost out of has already been replaced or dealt with.','你快用完或一直拖着没处理的某个小东西，TA已经顺手补上或解决了。','A','A-anticipate'),
+O('They arrive with a weird snack, bookmark, or object because “I saw this and thought of you.”','TA带回来一个奇怪零食、书签或小物：“刚看到就想到你了。”','G','G-thought'),
+O('A hand briefly on your waist or shoulder as they pass behind you.','TA从身后经过时，手在你腰上或肩上停了一下。','P','P-everyday'),
+O('“Come with me,” turning a boring errand into time spent together.','一句“陪我一起去吧”，把无聊跑腿变成两个人的时间。','T','T-shared')]},
+{dir:'G',en:'After a week mostly apart, you finally get one evening together. What do you naturally prioritize for your partner?',zh:'一周里几乎都没怎么见面，终于有一个晚上能在一起。你自然会优先做什么？',o:[
+O('Bringing something you’ve accumulated or saved for them during the week.','把这一周里给TA留着、攒着的小东西带来。','G','G-ritual'),
+O('Taking care of a practical problem that’s been bothering them.','顺手解决一个最近一直烦着TA的实际问题。','A','A-relief'),
+O('Protecting a block of uninterrupted time to actually be together.','保住一整段不被打扰的时间，好好待在一起。','T','T-focus'),
+O('Closing the physical distance—long hug, cuddling, kissing, whatever fits the relationship.','先把物理距离补回来——久一点的拥抱、依偎、亲吻，按你们的相处方式来。','P','P-intimacy')]},
+{dir:'R',en:'You’re moving, reorganizing, or otherwise surrounded by domestic chaos. Which moment would make you feel unexpectedly loved?',zh:'你正在搬家、重新整理，或者反正就是被一地生活残局包围。哪个瞬间会让你突然觉得“被爱到了”？',o:[
+O('They simply take responsibility for the job you hate most.','TA直接把你最讨厌的那项活儿接过去。','A','A-relief'),
+O('They deliberately protect an afternoon for the two of you to work, stop, eat and decompress together.','TA特意留出一下午，让你们一起干活、停下来、吃饭、喘口气。','T','T-focus'),
+O('They tell you something they admire about the way you’re handling the mess.','TA具体说出：TA很欣赏你处理这团乱局时的某个地方。','W','W-encouragement'),
+O('When the last box is down, they pull you into them and kiss or hold you like the place has finally become yours together.','最后一个箱子放下后，TA把你拉过去抱住或亲一下，像这个地方终于真的成了“你们的”。','P','P-intimacy')]},
+{dir:'G',en:'Your partner has been swallowed by a demanding project for days. Your affection tends to leak out as:',zh:'伴侣已经连续几天被一个高压项目吞没。你的爱意往往会从哪里漏出来？',o:[
+O('Quietly taking over some recurring task or meal.','悄悄接手某个重复的家务或一顿饭。','A','A-relief'),
+O('Leaving little words of encouragement in places they’ll encounter them.','在TA会看到的地方留几句小小的鼓励。','W','W-encouragement'),
+O('Working or reading nearby so they have company without having to entertain you.','自己在附近工作或看书，让TA有人陪但不必招呼你。','T','T-quiet'),
+O('Small passing touches whenever you cross paths.','每次擦身而过时都顺手碰碰TA。','P','P-everyday')]},
+{dir:'R',en:'Your partner had to leave very early while you were asleep. Which leftover trace changes the emotional temperature of the morning most?',zh:'伴侣在你还睡着时很早就出门了。醒来后，哪种“留下的痕迹”最能改变这个早晨的温度？',o:[
+O('A message: “You looked peaceful. I love our mornings.”','一条消息：“你刚才睡得很安稳。我很喜欢我们一起醒来的早晨。”','W','W-reassurance'),
+O('A small favorite food or object left where you’d find it.','一个你喜欢的小吃或小物，被放在你一定会看到的地方。','G','G-ritual'),
+O('A later message asking you to keep the evening free for a slow dinner together.','后来又来一条消息，让你晚上别安排别的，想一起慢慢吃顿饭。','T','T-quiet'),
+O('The half-memory of them tucking the blanket around you and kissing your forehead before leaving.','半梦半醒间记得TA替你掖了掖被子，走前亲了一下额头。','P','P-everyday')]},
+{dir:'G',en:'Your partner is obviously having a terrible day but says they don’t want to talk about it. Your first impulse is:',zh:'伴侣明显过得很糟，但说现在不想谈。你的第一冲动是：',o:[
+O('Stay nearby without demanding conversation.','待在附近，不追问，也不要求TA开口。','T','T-quiet'),
+O('Offer a shoulder squeeze, hug or physical closeness if they want it.','如果TA愿意，就捏捏肩、抱一下，或靠近一点。','P','P-comfort'),
+O('Say something brief like, “No explanation required. I’m here.”','简单说一句类似：“不用解释。我在。”','W','W-reassurance'),
+O('Quietly place their favorite little comfort thing beside them.','默默把TA最喜欢的那个安慰小物或小吃放到旁边。','G','G-thought')]},
+{dir:'R',en:'You’ve just finished something that mattered greatly to you. Which response would penetrate deepest?',zh:'你刚完成一件对自己非常重要的事。哪种回应最能真正进到心里？',o:[
+O('They tell you something specific about the work—and about your ability—that only someone paying attention could have said.','TA说出一个关于成果、也关于你能力的具体观察；只有真正关注过的人才说得出来。','W','W-recognition'),
+O('They actually make time to read, watch, or see what you did properly.','TA真的腾出时间，把你做的东西认真看完。','T','T-focus'),
+O('They handle one miserable next-step task because they know you’re exhausted.','TA知道你已经累透了，于是替你处理掉后续某件最烦的事。','A','A-follow'),
+O('They give you a small object that marks the milestone.','TA给你一个小东西，把这个节点记下来。','G','G-keepsake')]},
+{dir:'G',en:'You’ve both returned from a socially exhausting evening. Your partner looks completely depleted. You tend to:',zh:'你们刚从一个社交耗竭的晚上回来，伴侣看起来已经彻底没电。你通常会：',o:[
+O('Tell them some particular thing you loved or appreciated about them tonight.','告诉TA，今晚你尤其喜欢或欣赏TA的某个具体地方。','W','W-recognition'),
+O('Abandon any remaining plans and protect a quiet stretch of time together.','把剩下的安排都扔掉，留一段安静时间一起缓过来。','T','T-focus'),
+O('Handle water, food, cleanup, clothes—whatever makes decompression easier.','处理水、吃的、收拾、衣服——总之让TA更容易卸下来。','A','A-relief'),
+O('Produce some tiny comfort treat you know will make the landing softer.','拿出一个你知道会让TA舒服一点的小零食或小东西。','G','G-ritual')]},
+{dir:'R',en:'A disagreement has genuinely been repaired. Which thing makes you believe the repair?',zh:'一次争执已经真正谈开。哪件事最能让你相信“这次是真的修好了”？',o:[
+O('They name what they got wrong and say clearly what you mean to them.','TA明确说出自己哪里错了，也说清楚你对TA意味着什么。','W','W-reassurance'),
+O('The following day, they actually change the behavior without being reminded.','第二天开始，TA真的改变了那个行为，不需要你再提醒。','A','A-follow'),
+O('They offer their hand or an embrace and let you decide whether to come closer.','TA伸出手或给出拥抱的邀请，但把要不要靠近的决定留给你。','P','P-comfort'),
+O('Somewhere afterward appears a tiny peace offering tied to a shared joke or memory.','之后某个地方出现一件小小的和好礼物，和你们共同的梗或记忆有关。','G','G-keepsake')]},
+{dir:'G',en:'You have only fifteen minutes together before one of you has to leave for several days. What do you instinctively spend those minutes doing?',zh:'在其中一个人要离开好几天之前，你们只剩十五分钟。你本能地会把这十五分钟花在哪里？',o:[
+O('Saying the exact thing you don’t want them to leave without hearing.','把那句你绝不想让TA没听见就离开的话说出来。','W','W-recognition'),
+O('Making sure the missing charger, ticket, bag, medication or last practical detail is handled.','确认充电器、票、包、药或最后一个实际细节都处理妥了。','A','A-follow'),
+O('Slipping a small object or token into their things for them to discover later.','往TA行李里悄悄塞一个小东西，让TA之后自己发现。','G','G-keepsake'),
+O('Spending most of the remaining time physically close.','把剩下的大部分时间都用来靠得很近。','P','P-intimacy')]}
+];
+
+const ui={
+ en:{brand:'THE LOVE AFTERIMAGE TEST',kicker:'A reflective, semi-projective prototype',mainTitle:'The Love Afterimage',altTitle:'爱的余像',subtitle:'What kinds of love stay with you — and what kinds do you instinctively leave behind?',
+ intro:'Imagine one person you love romantically — or someone with whom you could imagine that kind of intimacy. Twenty small scenes will follow. In each one, choose the detail that catches you <b>FIRST</b>, then the one that matters <b>SECOND</b>. Go with your first reaction rather than what a “good partner” should do.',
+ mini1h:'Two profiles',mini1b:'What makes you feel loved, and how you tend to love.',mini2h:'Five proportions',mini2b:'No forced “primary type”; your whole distribution matters.',mini3h:'Hidden dialects',mini3b:'Nuances such as quiet presence, reassurance, relief, keepsakes, and comfort touch.',
+ disclaimer:'This is a reflective prototype, not a diagnostic or clinically validated psychological test.',start:'Begin the 20 scenes',progress:'Follow what catches first.',scene:'SCENE',inst:'Choose FIRST, then SECOND. Click a selected choice again to undo it.',clear:'Clear this scene',back:'Back',next:'Next',finish:'See my results',first:'1',second:'2',
+ resultKicker:'YOUR LOVE AFTERIMAGE',resultTitle:'Two directions of affection',copy:'Copy text',image:'Share / save image',profiles:'Your five-part profiles',receive:'RECEIVED LOVE',give:'GIVEN LOVE',receiveLede:'What most readily registers as “I am loved.”',giveLede:'What you most instinctively do to communicate love.',dialects:'Your strongest dialects',shape:'Shape of the profile',
+ lowNote:'Low relative preference does not mean dislike. The percentages describe which forms of affection won when several plausible forms competed. Treat the result as a conversation starter, not a diagnosis.',restart:'Retake / edit answers',translation:'Translation distance',translationSmall:'How much your giving distribution shifts away from your receiving distribution. Descriptive, not a good/bad score.',breadthR:'Receive breadth',breadthG:'Give breadth',breadthSmall:'100% means the five channels are used almost evenly; lower values mean a more concentrated profile.',
+ receiveDial:'Received-love dialects',giveDial:'Given-love dialects',notEnough:'Not enough selections in this channel for a meaningful dialect breakdown.',copied:'Result text copied.',saved:'Image prepared.',
+ topSame:'Your strongest channel is the same in both directions:',topDiff:'The clearest asymmetry in your profile is this:',
+ gapSame:'You most readily receive and give love through {x}.',gapDiff:'You most readily receive love through {r}, while your instinctive way of giving love is {g}.',
+ imageTitle:'The Love Afterimage Test',imageSub:'Received love vs. given love',nonClinical:'Reflective prototype · not a clinical assessment'},
+ zh:{brand:'爱的余像 · LOVE AFTERIMAGE',kicker:'一个反思型、半投射式原型',mainTitle:'爱的余像',altTitle:'The Love Afterimage',subtitle:'什么样的爱会留在你身上——而你又会本能地留下怎样的爱？',
+ intro:'请想象一个你在恋爱意义上爱的人——如果现在没有伴侣，也可以想象一个你能够与之建立这种亲密关系的人。接下来有二十个小场景。每一题先选最先抓住你的那个细节（<b>FIRST</b>），再选第二个仍然重要的（<b>SECOND</b>）。尽量按第一反应作答，不要去想“一个好伴侣应该怎么做”。',
+ mini1h:'两个方向',mini1b:'什么会让你感到被爱，以及你通常怎样去爱。',mini2h:'五种比例',mini2b:'不强行把你归成一种“主类型”，整个分布更重要。',mini3h:'隐藏方言',mini3b:'例如安静共处、安心确认、替你减负、纪念物、安抚式接触。',
+ disclaimer:'这是一个用于自我观察的原型测试，不是诊断工具，也尚未经过临床或心理测量学验证。',start:'开始 20 个场景',progress:'先跟着第一眼的感觉走。',scene:'场景',inst:'先选 FIRST，再选 SECOND。再次点击已选项可以撤销。',clear:'清空本题',back:'上一题',next:'下一题',finish:'查看结果',first:'1',second:'2',
+ resultKicker:'你的爱的余像',resultTitle:'爱在两个方向上的分布',copy:'复制文字结果',image:'分享 / 保存结果图',profiles:'你的五维比例',receive:'你如何感到被爱',give:'你通常如何表达爱',receiveLede:'哪些行为最容易让你真正产生“我被爱着”的感觉。',giveLede:'面对爱的人，你最自然会用哪些方式把爱做出来。',dialects:'最突出的“方言”',shape:'你的分布形状',
+ lowNote:'相对比例低，并不代表你讨厌这种爱的表达。它只表示：当几种都合理的爱同时竞争时，它较少成为你的优先选择。请把结果当作理解自己和沟通关系的起点，而不是诊断。',restart:'重新测试 / 修改答案',translation:'爱语转换距离',translationSmall:'表示“你如何接收爱”与“你如何给出爱”的分布差异。这里只作描述，不分好坏。',breadthR:'接收广度',breadthG:'表达广度',breadthSmall:'100% 表示五种方式几乎同样常胜出；越低则表示偏好越集中。',
+ receiveDial:'被爱时的方言',giveDial:'表达爱时的方言',notEnough:'这一类别的选择次数还不足以做有意义的方言细分。',copied:'文字结果已复制。',saved:'结果图已生成。',
+ topSame:'你在两个方向上最突出的通道相同：',topDiff:'你最明显的“接收—表达”差异是：',
+ gapSame:'你最容易通过{x}感到被爱，也最常用{x}去爱别人。',gapDiff:'你最容易通过{r}感到被爱，但你表达爱时最本能的方式是{g}。',
+ imageTitle:'爱的余像',imageSub:'被爱方式 × 表达方式',nonClinical:'反思型原型 · 非临床评估'}
+};
+const descriptions={
+ en:{
+ R:{W:'Specific words land when they show that someone has truly noticed you, your effort, or your inner state.',T:'Love registers through psychological room: attention, unhurried presence, and time that feels deliberately protected.',A:'Care becomes convincing when it takes weight off you, anticipates needs, or reliably turns intention into action.',G:'Objects matter less as objects than as evidence: “you existed in my mind while you were not here.”',P:'Affection becomes especially legible through safe, welcome physical closeness—from passing touch to sustained intimacy.'},
+ G:{W:'You tend to turn affection into language: naming what you see, reassuring, recognizing, or encouraging.',T:'You tend to give love by making room—protecting attention, sharing experiences, or simply staying present.',A:'You tend to make love practical: reducing burdens, anticipating needs, and following through.',G:'You often externalize affection into small symbols, keepsakes, rituals, or things selected with a particular person in mind.',P:'You tend to communicate warmth through welcome physical closeness, comfort, and everyday affectionate contact.'}},
+ zh:{
+ R:{W:'对你而言，言语真正有分量的前提通常是“TA确实看见了我”——看见你的努力、状态或那个很具体的你。',T:'你更容易从“对方为你留出了心理空间”里读到爱：专注、从容、不被挤占的共同时间。',A:'当爱变成了真正的减负、提前留意或可靠落实时，你会更确信它不是一句空话。',G:'重要的往往不是物本身，而是它证明了：即使你不在场，你也曾经出现在TA脑海里。',P:'安全、被欢迎的身体靠近会让爱变得格外清楚——从随手的触碰到持续的亲密。'},
+ G:{W:'你常常把爱变成语言：把自己看到的说出来，给予肯定、安心感、认可或鼓励。',T:'你倾向于用“留出空间”去爱：给出注意力、共同经历，或者只是安静地陪着。',A:'你很容易把爱做成实际行动：替对方减负、提前想到需要，或者把承诺真正落实。',G:'你会把感情装进某个可留下的东西里：小礼物、纪念物、仪式，或“看到就想到TA”的选择。',P:'你倾向于通过被双方欢迎的身体靠近来表达温度，包括安抚、日常亲昵和更深的浪漫亲密。'}}
+};
+let lang=localStorage.getItem('loveLang')||'en';
+let theme=localStorage.getItem('loveTheme')||((matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');
+let index=0;let answers=Q.map(()=>({first:null,second:null}));
+let orders=Q.map((q,qi)=>shuffle(q.o.map((_,i)=>i),qi+37));
+function shuffle(arr,seed){let x=seed*9301+49297;for(let i=arr.length-1;i>0;i--){x=(x*233280+12345)%2147483647;const j=x%(i+1);[arr[i],arr[j]]=[arr[j],arr[i]]}return arr}
+const $=id=>document.getElementById(id);
+function applyTheme(){document.documentElement.dataset.theme=theme;localStorage.setItem('loveTheme',theme)}
+function applyLang(){localStorage.setItem('loveLang',lang);document.documentElement.lang=lang==='zh'?'zh-CN':'en';$('langBtn').textContent=lang==='en'?'中文':'EN';
+ const t=ui[lang];['brand','kicker','mainTitle','altTitle','subtitle','mini1h','mini1b','mini2h','mini2b','mini3h','mini3b','disclaimer'].forEach(k=>$(k).innerHTML=t[k]);$('introText').innerHTML=t.intro;$('startBtn').textContent=t.start;$('progressTitle').textContent=t.progress;$('instructions').textContent=t.inst;$('clearBtn').textContent=t.clear;$('backBtn').textContent=t.back;
+ $('resultKicker').textContent=t.resultKicker;$('resultTitle').textContent=t.resultTitle;$('copyBtn').textContent=t.copy;$('imageBtn').textContent=t.image;$('profilesHeading').textContent=t.profiles;$('dialectHeading').textContent=t.dialects;$('metricsHeading').textContent=t.shape;$('resultNote').textContent=t.lowNote;$('restartBtn').textContent=t.restart;
+ if($('testShell').style.display==='block') renderQ(); if($('results').style.display==='block') renderResults();}
+function start(){ $('intro').style.display='none';$('results').style.display='none';$('testShell').style.display='block';index=0;renderQ();scrollTo({top:0,behavior:'smooth'}) }
+function renderQ(){const q=Q[index],a=answers[index],t=ui[lang];$('progressCount').textContent=String(index+1).padStart(2,'0')+' / '+Q.length;$('progressFill').style.width=((index)/Q.length*100)+'%';$('qnum').textContent=t.scene+' '+String(index+1).padStart(2,'0');$('prompt').textContent=q[lang];$('options').innerHTML='';
+ orders[index].forEach(oi=>{const op=q.o[oi];const b=document.createElement('button');b.className='option'+(a.first===oi?' first':'')+(a.second===oi?' second':'');const rank=a.first===oi?t.first:(a.second===oi?t.second:'');b.innerHTML='<span class="rank">'+rank+'</span><span class="option-text">'+escapeHtml(op[lang])+'</span>';b.onclick=()=>choose(oi);$('options').appendChild(b)});
+ $('backBtn').disabled=index===0;$('nextBtn').disabled=!(a.first!==null&&a.second!==null);$('nextBtn').textContent=index===Q.length-1?t.finish:t.next;}
+function choose(oi){const a=answers[index];if(a.first===oi){a.first=null;if(a.second!==null){a.first=a.second;a.second=null}}else if(a.second===oi){a.second=null}else if(a.first===null){a.first=oi}else if(a.second===null){a.second=oi}else{a.second=oi}renderQ()}
+function next(){if(index<Q.length-1){index++;renderQ();scrollTo({top:0,behavior:'smooth'})}else showResults()}
+function back(){if(index>0){index--;renderQ();scrollTo({top:0,behavior:'smooth'})}}
+function score(){const s={R:{W:0,T:0,A:0,G:0,P:0},G:{W:0,T:0,A:0,G:0,P:0},dialR:{},dialG:{}};Q.forEach((q,i)=>{const a=answers[i];[[a.first,2],[a.second,1]].forEach(([oi,pts])=>{if(oi===null)return;const op=q.o[oi];s[q.dir][op.lang]+=pts;const dk=q.dir==='R'?'dialR':'dialG';s[dk][op.dialect]=(s[dk][op.dialect]||0)+pts})});return s}
+function pct(v){return Math.round(v/30*100)}
+function topLang(obj){return Object.keys(obj).sort((a,b)=>obj[b]-obj[a])[0]}
+function breadth(obj){let h=0;Object.values(obj).forEach(v=>{const p=v/30;if(p>0)h-=p*Math.log(p)});return h/Math.log(5)}
+function distance(s){return Object.keys(L).reduce((z,k)=>z+Math.abs(s.R[k]/30-s.G[k]/30),0)/2}
+function profileHtml(dir,s){const t=ui[lang];return `<h3>${dir==='R'?t.receive:t.give}</h3><p class="profile-lede">${dir==='R'?t.receiveLede:t.giveLede}</p>`+Object.keys(L).map(k=>`<div class="barrow"><div class="barlabel">${L[k][lang]}</div><div class="bartrack"><div class="bar" style="width:${pct(s[dir][k])}%;background:${L[k].color}"></div></div><div class="pct">${pct(s[dir][k])}%</div></div>`).join('')}
+function dialectHtml(dir,s){const t=ui[lang], parent=topLang(s[dir]), dict=dir==='R'?s.dialR:s.dialG, raw=s[dir][parent], entries=Object.entries(dict).filter(([k])=>k.startsWith(parent+'-')).sort((a,b)=>b[1]-a[1]);let body=t.notEnough;if(raw>=4&&entries.length){body='<div class="chipline">'+entries.map(([k,v])=>`<span class="chip"><b>${D[k][lang]}</b> · ${Math.round(v/raw*100)}%</span>`).join('')+'</div>'}return `<h4>${dir==='R'?t.receiveDial:t.giveDial} · ${L[parent][lang]}</h4>${body}`}
+function renderResults(){const s=score(),t=ui[lang],r=topLang(s.R),g=topLang(s.G);$('receiveProfile').innerHTML=profileHtml('R',s);$('giveProfile').innerHTML=profileHtml('G',s);$('receiveDialects').innerHTML=dialectHtml('R',s);$('giveDialects').innerHTML=dialectHtml('G',s);
+ const same=r===g;let sentence=(same?t.gapSame:t.gapDiff).replaceAll('{x}',L[r][lang]).replace('{r}',L[r][lang]).replace('{g}',L[g][lang]);$('mainInsight').innerHTML=`<strong>${same?t.topSame:t.topDiff}</strong><p>${sentence} ${descriptions[lang].R[r]} ${descriptions[lang].G[g]}</p>`;
+ $('metrics').innerHTML=`<div class="metric"><div class="big">${Math.round(distance(s)*100)}<span style="font-size:15px"> pp</span></div><div class="label">${t.translation}</div><div class="small">${t.translationSmall}</div></div><div class="metric"><div class="big">${Math.round(breadth(s.R)*100)}%</div><div class="label">${t.breadthR}</div><div class="small">${t.breadthSmall}</div></div><div class="metric"><div class="big">${Math.round(breadth(s.G)*100)}%</div><div class="label">${t.breadthG}</div><div class="small">${t.breadthSmall}</div></div>`;}
+function showResults(){$('testShell').style.display='none';$('intro').style.display='none';$('results').style.display='block';renderResults();scrollTo({top:0,behavior:'smooth'})}
+function resultText(){const s=score(),t=ui[lang],r=topLang(s.R),g=topLang(s.G);const line=dir=>Object.keys(L).sort((a,b)=>s[dir][b]-s[dir][a]).map(k=>`${L[k][lang]} ${pct(s[dir][k])}%`).join(lang==='zh'?' ｜ ':' · ');const dline=(dir)=>{const parent=topLang(s[dir]),raw=s[dir][parent],dict=dir==='R'?s.dialR:s.dialG;if(raw<4)return ui[lang].notEnough;return Object.entries(dict).filter(([k])=>k.startsWith(parent+'-')).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${D[k][lang]} ${Math.round(v/raw*100)}%`).join(lang==='zh'?'、':', ')};
+ return `${t.imageTitle}\n${t.imageSub}\n\n${t.receive}:\n${line('R')}\n${t.receiveDial} (${L[r][lang]}): ${dline('R')}\n\n${t.give}:\n${line('G')}\n${t.giveDial} (${L[g][lang]}): ${dline('G')}\n\n${t.translation}: ${Math.round(distance(s)*100)} pp\n${t.breadthR}: ${Math.round(breadth(s.R)*100)}%\n${t.breadthG}: ${Math.round(breadth(s.G)*100)}%\n\n${t.nonClinical}`}
+async function copyText(){const text=resultText();try{await navigator.clipboard.writeText(text)}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}toast(ui[lang].copied)}
+function cssColor(code){const map={W:'#9a638f',T:'#547b9a',A:'#60806b',G:'#a47646',P:'#ad6067'};return map[code]}
+function rounded(ctx,x,y,w,h,r,fill){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill()}
+function drawWrapped(ctx,text,x,y,maxW,lineH,maxLines=10){const chars=lang==='zh'?[...text]:text.split(' '),joiner=lang==='zh'?'':' ';let line='',lines=[];for(const token of chars){const test=line?line+joiner+token:token;if(ctx.measureText(test).width>maxW&&line){lines.push(line);line=token}else line=test}if(line)lines.push(line);lines=lines.slice(0,maxLines);lines.forEach((ln,i)=>ctx.fillText(ln,x,y+i*lineH));return y+lines.length*lineH}
+async function shareImage(){const s=score(),t=ui[lang],canvas=document.createElement('canvas');canvas.width=1200;canvas.height=1540;const c=canvas.getContext('2d');const dark=theme==='dark';const bg=dark?'#1b1918':'#faf7f2',surface=dark?'#272321':'#ffffff',text=dark?'#f5f0ea':'#282522',muted=dark?'#b8afa7':'#746d66',line=dark?'#403a35':'#e3dbd0';c.fillStyle=bg;c.fillRect(0,0,1200,1540);c.fillStyle=text;c.font=`500 64px Georgia, "Songti SC", serif`;c.fillText(t.imageTitle,80,110);c.fillStyle=muted;c.font=`26px system-ui, "PingFang SC", sans-serif`;c.fillText(t.imageSub,80,154);
+ const panel=(x,y,title,dir)=>{rounded(c,x,y,500,590,28,surface);c.fillStyle=text;c.font=`700 25px system-ui, "PingFang SC", sans-serif`;c.fillText(title,x+32,y+52);let yy=y+95;Object.keys(L).forEach(k=>{c.fillStyle=text;c.font=`20px system-ui, "PingFang SC", sans-serif`;c.fillText(L[k][lang],x+32,yy);c.fillStyle=line;c.fillRect(x+32,yy+18,365,14);c.fillStyle=cssColor(k);c.fillRect(x+32,yy+18,365*(pct(s[dir][k])/100),14);c.fillStyle=muted;c.font=`700 19px system-ui`;c.textAlign='right';c.fillText(pct(s[dir][k])+'%',x+454,yy+10);c.textAlign='left';yy+=86});};panel(80,220,t.receive,'R');panel(620,220,t.give,'G');
+ const r=topLang(s.R),g=topLang(s.G);rounded(c,80,850,1040,250,28,surface);c.fillStyle=text;c.font=`600 29px Georgia, "Songti SC", serif`;c.fillText(r===g?t.topSame:t.topDiff,112,900);c.font=`22px system-ui, "PingFang SC", sans-serif`;c.fillStyle=muted;const sent=(r===g?t.gapSame:t.gapDiff).replaceAll('{x}',L[r][lang]).replace('{r}',L[r][lang]).replace('{g}',L[g][lang]);drawWrapped(c,sent,112,944,950,34,4);
+ const metric=(x,label,val)=>{rounded(c,x,1140,320,190,24,surface);c.fillStyle=text;c.font='500 48px Georgia, serif';c.fillText(val,x+28,1205);c.fillStyle=muted;c.font=`18px system-ui, "PingFang SC", sans-serif`;drawWrapped(c,label,x+28,1244,264,27,3)};metric(80,t.translation,Math.round(distance(s)*100)+' pp');metric(440,t.breadthR,Math.round(breadth(s.R)*100)+'%');metric(800,t.breadthG,Math.round(breadth(s.G)*100)+'%');c.fillStyle=muted;c.font=`17px system-ui, "PingFang SC", sans-serif`;c.fillText(t.nonClinical,80,1420);c.font=`16px system-ui, "PingFang SC", sans-serif`;drawWrapped(c,t.lowNote,80,1460,1040,24,3);
+ canvas.toBlob(async blob=>{const file=new File([blob],'love-afterimage-result.png',{type:'image/png'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:t.imageTitle,text:t.imageSub});return}catch(e){if(e.name==='AbortError')return}}const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='love-afterimage-result.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast(t.saved)},'image/png')}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1800)}
+function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+$('themeBtn').onclick=()=>{theme=theme==='light'?'dark':'light';applyTheme()};$('langBtn').onclick=()=>{lang=lang==='en'?'zh':'en';applyLang()};$('startBtn').onclick=start;$('nextBtn').onclick=next;$('backBtn').onclick=back;$('clearBtn').onclick=()=>{answers[index]={first:null,second:null};renderQ()};$('copyBtn').onclick=copyText;$('imageBtn').onclick=shareImage;$('restartBtn').onclick=()=>{$('results').style.display='none';$('testShell').style.display='block';index=0;renderQ();scrollTo({top:0,behavior:'smooth'})};
+applyTheme();applyLang();
+</script>
+</body>
+</html>
